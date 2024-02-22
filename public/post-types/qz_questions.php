@@ -51,3 +51,43 @@ $args = array(
     'capability_type' => 'post',
 );
 register_post_type('qz-questions', $args);
+
+
+// Custom Field
+function add_custom_fields_to_faq()
+{
+    add_meta_box(PLUGIN_PREFIX . '_question_type', __('Question Type', 'textdomain'), 'render_question_type_meta_box', 'qz-questions', 'normal', 'high');
+}
+add_action('add_meta_boxes', 'add_custom_fields_to_faq');
+
+function render_question_type_meta_box($post)
+{
+    $post_id = $post->ID;
+    // Retrieve existing values for the custom fields
+    $question_type = get_post_meta($post_id, 'question_type', true);
+?>
+    <div id="question-type">
+        <label for="question_type_single">
+            <span>True/False:</span>
+            <input type="radio" id="question_type_single" name="question_type" value="single" <?php echo (isset($question_type) && $question_type == 'single') ? 'checked' : ''; ?> />
+        </label>
+        <label for="question_type_multiple">
+            <span>Multiple Option - Single Select:</span>
+            <input type="radio" id="question_type_multiple" name="question_type" value="multiple" <?php echo (isset($question_type) && $question_type == 'multiple') ? 'checked' : ''; ?> />
+        </label>
+    </div>
+<?php
+}
+
+function save_custom_fields_data($post_id)
+{
+    // Save custom field data when the post is saved
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    if (isset($_POST['question_type']) && $_POST['question_type'] != '') {
+        update_post_meta($post_id, 'question_type', sanitize_text_field($_POST['question_type']));
+
+        if ($_POST['question_type'] === 'multiple') {
+        }
+    }
+}
+add_action('save_post', 'save_custom_fields_data');

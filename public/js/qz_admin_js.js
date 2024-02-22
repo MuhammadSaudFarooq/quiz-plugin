@@ -1,0 +1,1 @@
+console.log(urls.ajax_url, urls.site_url);

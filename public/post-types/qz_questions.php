@@ -1,4 +1,5 @@
 <?php
+
 // Register Custom Post Type Questions
 $labels = array(
     'name' => _x('Questions', 'Post Type General Name', 'textdomain'),
@@ -53,12 +54,12 @@ $args = array(
 register_post_type('qz-questions', $args);
 
 
-// Custom Field
-function add_custom_fields_to_faq()
+// Questions functionality
+function add_question_fields_to_questions()
 {
-    add_meta_box(PLUGIN_PREFIX . '_question_type', __('Question Type', 'textdomain'), 'render_question_type_meta_box', 'qz-questions', 'normal', 'high');
+    add_meta_box(PLUGIN_PREFIX . '_question_type', __('Question Type', 'textdomain'), 'render_question_type_meta_box', PLUGIN_PREFIX . '-questions', 'normal', 'high');
 }
-add_action('add_meta_boxes', 'add_custom_fields_to_faq');
+add_action('add_meta_boxes', 'add_question_fields_to_questions');
 
 function render_question_type_meta_box($post)
 {
@@ -69,17 +70,45 @@ function render_question_type_meta_box($post)
     <div id="question-type">
         <label for="question_type_single">
             <span>True/False:</span>
-            <input type="radio" id="question_type_single" name="question_type" value="single" <?php echo (isset($question_type) && $question_type == 'single') ? 'checked' : ''; ?> />
+            <input type="radio" id="question_type_single" name="question_type" value="single" <?php echo (isset($question_type) && $question_type == 'single') ? 'checked' : ''; ?> required />
         </label>
         <label for="question_type_multiple">
             <span>Multiple Option - Single Select:</span>
-            <input type="radio" id="question_type_multiple" name="question_type" value="multiple" <?php echo (isset($question_type) && $question_type == 'multiple') ? 'checked' : ''; ?> />
+            <input type="radio" id="question_type_multiple" name="question_type" value="multiple" <?php echo (isset($question_type) && $question_type == 'multiple') ? 'checked' : ''; ?> required />
         </label>
+
+        <?php
+        if ($question_type === 'multiple') {
+            $multiple_options = get_post_meta($post_id, 'multiple_options', true);
+            if (!empty($multiple_options)) {
+                $template = "<div class='multiple-options'>";
+                foreach ($multiple_options as $key => $value) {
+                    $template .= "<label>";
+                    $template .= "<input type='text' name='multiple_options[]' value='" . $value . "' required>";
+                    if ($key > 1) {
+                        $template .= "<a href='javascript:void(0)' class='remove-question'>";
+                        $template .= "<i class='fa fa-minus'></i>";
+                        $template .= "</a>";
+                    }
+                    $template .= "</label>";
+                }
+                if (count($multiple_options) < 6) {
+                    $template .= "<div class='add-question'>";
+                    $template .= "<a href='javascript:void(0)'>Add New";
+                    $template .= "<i class='fa fa-plus'></i>";
+                    $template .= "</a>";
+                    $template .= "</div>";
+                }
+                $template .= "</div>"; // .\end
+                echo $template;
+            }
+        }
+        ?>
     </div>
 <?php
 }
 
-function save_custom_fields_data($post_id)
+function save_questio_type_data($post_id)
 {
     // Save custom field data when the post is saved
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
@@ -87,7 +116,8 @@ function save_custom_fields_data($post_id)
         update_post_meta($post_id, 'question_type', sanitize_text_field($_POST['question_type']));
 
         if ($_POST['question_type'] === 'multiple') {
+            update_post_meta($post_id, 'multiple_options', $_POST['multiple_options']);
         }
     }
 }
-add_action('save_post', 'save_custom_fields_data');
+add_action('save_post', 'save_questio_type_data');

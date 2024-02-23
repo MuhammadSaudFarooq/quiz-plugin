@@ -51,3 +51,112 @@ $args = array(
     'capability_type' => 'post',
 );
 register_post_type('qz-quiz', $args);
+
+/**
+ * Quiz Category functionality
+ */
+function add_category_to_quiz()
+{
+    add_meta_box(PLUGIN_PREFIX . '_quiz', __('Quiz Category', 'textdomain'), 'render_quiz_category_meta_box', PLUGIN_PREFIX . '-quiz', 'side', 'default');
+}
+
+function render_quiz_category_meta_box($post)
+{
+    $post_id = $post->ID;
+    // Retrieve existing values for the custom fields
+    $quizCategories = get_option(PLUGIN_PREFIX . "_quiz_categories");
+    $quizCatRelation = get_option(PLUGIN_PREFIX . "_quiz_cat_relation");
+
+    $count = 1;
+    $template = '<div id="quiz-category">';
+    if ($quizCatRelation) {
+        foreach ($quizCategories as $key => $value) {
+            $template .= '<label for="category-' . $count . '" title="' . (isset($quizCatRelation['category-' . $count]) ? get_the_title($quizCatRelation['category-' . $count]) : "") . '">';
+
+            if (isset($quizCatRelation['category-' . $count]) && $quizCatRelation['category-' . $count] == $post_id) {
+                $template .= '<input type="radio" id="category-' . $count . '" name="quiz_category" value="category-' . $count . '" required checked>';
+            } else if (isset($quizCatRelation['category-' . $count])) {
+                $template .= '<input type="radio" id="category-' . $count . '" name="quiz_category" value="category-' . $count . '" required disabled>';
+            } else {
+                $template .= '<input type="radio" id="category-' . $count . '" name="quiz_category" value="category-' . $count . '" required>';
+            }
+
+            $template .= '<span>' . $value . '</span>';
+            $template .= '</label>';
+            $count++;
+        }
+    } else {
+        foreach ($quizCategories as $key => $value) {
+            $template .= '<label for="category-' . $count . '">';
+            $template .= '<input type="radio" id="category-' . $count . '" name="quiz_category" value="category-' . $count . '" required>';
+            $template .= '<span>' . $value . '</span>';
+            $template .= '</label>';
+            $count++;
+        }
+    }
+    $template .= '</div>';
+    echo $template;
+}
+
+function save_quiz_category_data($post_id)
+{
+    // Save custom field data when the post is saved
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    if (isset($_POST['quiz_category']) && $_POST['quiz_category'] != '') {
+        $quizCatRelation = get_option(PLUGIN_PREFIX . "_quiz_cat_relation");
+        if ($quizCatRelation) {
+            $quizCatRelation[sanitize_text_field($_POST['quiz_category'])] = $post_id;
+            update_option(PLUGIN_PREFIX . "_quiz_cat_relation", $quizCatRelation);
+            update_post_meta($post_id, 'quiz_category', sanitize_text_field($_POST['quiz_category']));
+        } else {
+            $quizCatRelation = [];
+            $quizCatRelation[sanitize_text_field($_POST['quiz_category'])] = $post_id;
+            add_option(PLUGIN_PREFIX . "_quiz_cat_relation", $quizCatRelation);
+            update_post_meta($post_id, 'quiz_category', sanitize_text_field($_POST['quiz_category']));
+        }
+    }
+}
+
+add_action('admin_menu', 'add_category_to_quiz');
+add_action('save_post', 'save_quiz_category_data');
+
+
+/**
+ * Quiz question functionality
+ */
+
+function add_questions_to_quiz()
+{
+    add_meta_box(PLUGIN_PREFIX . '_quiz_question', __('Questions', 'textdomain'), 'render_quiz_question_meta_box', PLUGIN_PREFIX . '-quiz', 'normal', 'default');
+}
+
+function render_quiz_question_meta_box($post)
+{
+    $post_id = $post->ID;
+    $question_args = array(
+        'post_type' => PLUGIN_PREFIX . '-questions',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'orderby' => 'title',
+        'order' => 'ASC',
+    );
+    $question_loop = new WP_Query($question_args);
+    $question_loop = $question_loop->posts;
+
+    if (!empty($question_loop)) {
+        $template = '<select id="quiz-questions">';
+        $template .= '<option value="" selected disabled>Select question...</option>';
+        foreach ($question_loop as $key => $value) {
+            $template .= '<option value="' . $value->ID . '">' . $value->post_title . '</option>';
+        }
+        $template .= '</select>';
+        echo $template;
+    }
+}
+
+function save_quiz_question_data()
+{
+}
+
+add_action('add_meta_boxes', 'add_questions_to_quiz');
+add_action('save_post', 'save_quiz_question_data');

@@ -1,0 +1,35 @@
+.multiple-options > label {
+  width: 100%;
+  display: block;
+  margin-top: 10px;
+}
+
+.multiple-options > label input {
+  width: 80%;
+}
+
+#quiz-category label {
+  display: block;
+  margin: 6px 0 6px 5px;
+}
+
+#quiz-category {
+  height: 150px;
+  overflow-y: scroll;
+}
+
+#quiz-category label span {
+  margin-left: 8px;
+}
+
+#quiz-category::-webkit-scrollbar {
+  width: 3px;
+}
+
+#quiz-category::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+#quiz-category::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+}

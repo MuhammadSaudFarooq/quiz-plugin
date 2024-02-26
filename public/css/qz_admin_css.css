@@ -33,3 +33,17 @@
 #quiz-category::-webkit-scrollbar-thumb {
   background: #c1c1c1;
 }
+
+.question-select {
+  width: 100%;
+}
+
+.conditions > label {
+  display: block;
+}
+
+.question-select,
+.conditions-select,
+.opt-select {
+  margin-bottom: 10px;
+}

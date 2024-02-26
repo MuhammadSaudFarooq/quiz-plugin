@@ -73,7 +73,7 @@ function render_question_type_meta_box($post)
             <input type="radio" id="question_type_single" name="question_type" value="single" <?php echo (isset($question_type) && $question_type == 'single') ? 'checked' : ''; ?> required />
         </label>
         <label for="question_type_multiple">
-            <span>Multiple Option - Single Select:</span>
+            <span>Multiple Option:</span>
             <input type="radio" id="question_type_multiple" name="question_type" value="multiple" <?php echo (isset($question_type) && $question_type == 'multiple') ? 'checked' : ''; ?> required />
         </label>
 

@@ -21,6 +21,8 @@ class QuizPluginIntegration
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
         add_action('wp_enqueue_scripts', [$this, 'enqueueFrontScripts']);
         add_action('wp_enqueue_scripts', [$this, 'enqueueFrontStyles']);
+        add_action('wp_ajax_' . PLUGIN_PREFIX . '_get_questions', [$this, 'ajaxGetQuestions']);
+        add_action('wp_ajax_' . PLUGIN_PREFIX . '_condition_options', [$this, 'ajaxConditionOptions']);
 
         if (!get_option($this->categoryKeyName)) {
             $quizCategories = [
@@ -51,7 +53,7 @@ class QuizPluginIntegration
     {
         wp_enqueue_script('font_awesome_js', $this->getScriptUrl('all.min.js'), array(), null, false);
         wp_enqueue_script(PLUGIN_PREFIX . '_admin_js', $this->getScriptUrl(PLUGIN_PREFIX . '_admin_js.js'), array(), null, false);
-        wp_localize_script(PLUGIN_PREFIX . '_admin_js', 'urls', array('ajax_url' => admin_url('admin-ajax.php'), 'site_url' => site_url()));
+        wp_localize_script(PLUGIN_PREFIX . '_admin_js', 'URLs', array('AJAX_URL' => admin_url('admin-ajax.php'), 'SITE_URL' => site_url(), 'PLUGIN_PREFIX' => PLUGIN_PREFIX));
     }
 
     public function enqueueAdminStyles()
@@ -64,7 +66,7 @@ class QuizPluginIntegration
     {
         wp_enqueue_script('font_awesome_js', $this->getScriptUrl('all.min.js'), array(), null, false);
         wp_enqueue_script(PLUGIN_PREFIX . '_front_js', $this->getScriptUrl(PLUGIN_PREFIX . '_front_js.js'), array(), null, false);
-        wp_localize_script(PLUGIN_PREFIX . '_front_js', 'urls', array('ajax_url' => admin_url('admin-ajax.php'), 'site_url' => site_url()));
+        wp_localize_script(PLUGIN_PREFIX . '_front_js', 'URLs', array('AJAX_URL' => admin_url('admin-ajax.php'), 'SITE_URL' => site_url(), 'PLUGIN_PREFIX' => PLUGIN_PREFIX));
     }
 
     public function enqueueFrontStyles()
@@ -80,9 +82,19 @@ class QuizPluginIntegration
         }
     }
 
+    public function ajaxGetQuestions()
+    {
+        require_once PLUGIN_DIR_PATH . "/includes/ajax/" . PLUGIN_PREFIX . "_get_questions.php";
+    }
+
+    public function ajaxConditionOptions()
+    {
+        require_once PLUGIN_DIR_PATH . "/includes/ajax/" . PLUGIN_PREFIX . "_condition_options.php";
+    }
+
     private function getPostTypeUrl($postTypeName)
     {
-        return PLUGIN_DIR_PATH . '/public/post-types/' . $postTypeName;
+        return PLUGIN_DIR_PATH . '/includes/post-types/' . $postTypeName;
     }
 
     private function getScriptUrl($scriptName)

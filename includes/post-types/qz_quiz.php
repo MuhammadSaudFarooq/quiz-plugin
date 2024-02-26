@@ -133,8 +133,9 @@ function add_questions_to_quiz()
 function render_quiz_question_meta_box($post)
 {
     $post_id = $post->ID;
+    $post_type = PLUGIN_PREFIX . '-questions';
     $question_args = array(
-        'post_type' => PLUGIN_PREFIX . '-questions',
+        'post_type' => $post_type,
         'post_status' => 'publish',
         'posts_per_page' => -1,
         'orderby' => 'title',
@@ -144,12 +145,16 @@ function render_quiz_question_meta_box($post)
     $question_loop = $question_loop->posts;
 
     if (!empty($question_loop)) {
-        $template = '<select id="quiz-questions">';
+        $template = '<div id="quiz-questions">';
+        $template = '<div>';
+        $template .= '<select class="question-select" data-posttype="' . $post_type . '" required>';
         $template .= '<option value="" selected disabled>Select question...</option>';
         foreach ($question_loop as $key => $value) {
             $template .= '<option value="' . $value->ID . '">' . $value->post_title . '</option>';
         }
         $template .= '</select>';
+        $template .= '</div>';
+        $template .= '</div>';
         echo $template;
     }
 }

@@ -143,24 +143,53 @@ function render_quiz_question_meta_box($post)
     );
     $question_loop = new WP_Query($question_args);
     $question_loop = $question_loop->posts;
+    $all_quiz_meta = get_post_meta($post_id);
+    $check_qs = get_post_meta($post_id, 'qs_1', true);
 
-    if (!empty($question_loop)) {
-        $template = '<div id="quiz-questions">';
-        $template = '<div>';
-        $template .= '<select class="question-select" data-posttype="' . $post_type . '" required>';
-        $template .= '<option value="" selected disabled>Select question...</option>';
-        foreach ($question_loop as $key => $value) {
-            $template .= '<option value="' . $value->ID . '">' . $value->post_title . '</option>';
+    function starts_with_qs($key)
+    {
+        return strpos($key, 'qs_') === 0;
+    }
+
+    if ($check_qs) {
+        foreach ($all_quiz_meta as $key => $value) {
+            if (starts_with_qs($key)) {
+                
+            }
         }
-        $template .= '</select>';
-        $template .= '</div>';
-        $template .= '</div>';
-        echo $template;
+    } else {
+        if (!empty($question_loop)) {
+            $template = '<div id="quiz-questions">';
+            $template = '<div>';
+            $template .= '<select class="question-select" name="qs_1" data-index="1" data-posttype="' . $post_type . '" required>';
+            $template .= '<option value="" selected disabled>Select question...</option>';
+            foreach ($question_loop as $key => $value) {
+                $template .= '<option value="' . $value->ID . '">' . $value->post_title . '</option>';
+            }
+            $template .= '</select>';
+            $template .= '</div>';
+            $template .= '</div>';
+            echo $template;
+        }
     }
 }
 
-function save_quiz_question_data()
+function save_quiz_question_data($post_id)
 {
+    // Save custom field data when the post is saved
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    if (isset($_POST)) {
+        $filteredKeys = array();
+        foreach ($_POST as $key => $value) {
+            if (strpos($key, 'qs_') === 0) {
+                $filteredKeys[$key] = $value;
+            }
+        }
+
+        foreach ($filteredKeys as $key => $value) {
+            update_post_meta($post_id, $key, $value);
+        }
+    }
 }
 
 add_action('add_meta_boxes', 'add_questions_to_quiz');

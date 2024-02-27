@@ -72,11 +72,16 @@ jQuery(document).ready(function ($) {
      * 
      * */
 
+    // function get_questions_ajax() {
+    // }
+
     // Question selection functionality
     $(document).on('change', '.question-select', function () {
         let _this = $(this);
         let posttype = _this.data('posttype');
         let question_id = _this.val();
+        let hierarchy_index = _this.data('index');
+        let ques_name = _this.attr('name');
 
         $.ajax({
             type: 'post',
@@ -99,6 +104,7 @@ jQuery(document).ready(function ($) {
                     _this.parent().find('.conditions').remove();
 
                     // Append conditions
+                    let cd_count = 1;
                     for (const key in data) {
                         if (Object.hasOwnProperty.call(data, key)) {
                             const ques = data[key];
@@ -107,7 +113,7 @@ jQuery(document).ready(function ($) {
                             opt_template += ques;
                             opt_template += ': ';
                             opt_template += '</span>';
-                            opt_template += '<select class="conditions-select" required>';
+                            opt_template += '<select class="conditions-select" name="' + ((ques_name != "" || ques_name != undefined) ? ques_name + "_" : "") + 'cd_' + cd_count + '" data-cd_index="' + cd_count + '" required>';
                             opt_template += '<option value="" selected disabled>Select condition...</option>';
 
                             for (const condition_key in condition) {
@@ -122,6 +128,7 @@ jQuery(document).ready(function ($) {
                             opt_template += '</select>';
                             opt_template += '</div>';
                         }
+                        cd_count++;
                     }
                     opt_template += '</div>';
                     _this.parent().append(opt_template);
@@ -157,12 +164,21 @@ jQuery(document).ready(function ($) {
         let question_type = URLs.PLUGIN_PREFIX + '-questions';
         let value = _this.val();
         let ques_template = '';
+        let prev_hierarchy_index = _this.parent().parent().prev().data('index');
+        let next_hierarchy_index = parseInt(prev_hierarchy_index) + 1;
+        let cd_index = _this.data('cd_index');
+        let cd_name = _this.attr('name');
+
+        // _this.parent().find('.opt-select').remove();
+        _this.next().remove();
 
         if (question_type === value) {
             let ques_clone = $(this).parent().parent().prev().clone();
             let selected_val = $(this).parent().parent().prev().find('option:selected').val();
 
-            ques_template += '<select class="opt-select" required>';
+            // ques_template += '<select class="opt-select" required style="margin-left: 20px; display: block; width: 100%;">';
+            ques_template += '<div style="margin-left: 20px;">';
+            ques_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "_" : "") + 'qs_' + next_hierarchy_index + '" data-index="' + next_hierarchy_index + '" data-posttype="' + URLs.PLUGIN_PREFIX + '-questions" required>';
             ques_template += '<option value="" selected="" disabled="">Select question...</option>';
 
             for (let i = 0; i < ques_clone[0].length; i++) {
@@ -175,67 +191,78 @@ jQuery(document).ready(function ($) {
             }
 
             ques_template += '</select>';
+            ques_template += '</div>';
             _this.parent().append(ques_template);
         }
+        else {
+            $.ajax({
+                type: 'post',
+                cache: false,
+                url: URLs.AJAX_URL,
+                data: {
+                    action: URLs.PLUGIN_PREFIX + "_condition_options",
+                    value: value
+                },
+                success: function (res) {
+                    res = JSON.parse(res);
+                    let opt_template = '';
 
-        /* $.ajax({
-            type: 'post',
-            cache: false,
-            url: URLs.AJAX_URL,
-            data: {
-                action: URLs.PLUGIN_PREFIX + "_condition_options",
-                value: value
-            },
-            success: function (res) {
-                res = JSON.parse(res);
-                let opt_template = '';
+                    _this.next().remove();
 
-                _this.next().remove();
-
-                if ((res.status === true || res.status === 1) && res.data != undefined) {
-                    let data = res.data;
-                    opt_template += '<select class="opt-select" required>';
-                    opt_template += '<option value="" selected disabled>Select question...</option>'
-                    for (const key in data) {
-                        if (Object.hasOwnProperty.call(data, key)) {
-                            const element = data[key];
-                            opt_template += '<option value="' + element.id + '">';
-                            opt_template += element.title;
-                            opt_template += '</option>';
+                    if ((res.status === true || res.status === 1) && res.data != undefined) {
+                        let data = res.data;
+                        opt_template += '<div style="margin-left: 20px;">';
+                        // opt_template += '<select class="opt-select" required>';
+                        opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "_" : "") + 'page" data-posttype="" required>';
+                        opt_template += '<option value="" selected disabled>Select question...</option>'
+                        for (const key in data) {
+                            if (Object.hasOwnProperty.call(data, key)) {
+                                const element = data[key];
+                                opt_template += '<option value="' + element.id + '">';
+                                opt_template += element.title;
+                                opt_template += '</option>';
+                            }
                         }
+                        opt_template += '</select>';
+                        opt_template += '</div>';
+                        _this.parent().append(opt_template);
                     }
-                    opt_template += '</select>';
-                    _this.parent().append(opt_template);
+                    else {
+                        alert(res.msg);
+                    }
                 }
-                else {
-                    alert(res.msg);
-                }
-            }
-        }); */
+            });
+        }
+
     });
 
     // Next question selection
-    $(document).on('change', '.opt-select', function () {
+    /* $(document).on('change', '.opt-select', function () {
         let _this = $(this);
         let opt_template = '';
         let ques_clone = $(this).parent().parent().prev().clone();
         let selected_val = $(this).parent().parent().prev().find('option:selected').val();
+        let check_page = _this.prev().find('option:selected').val();
 
-        opt_template += '<div style="margin-left: 20px;">';
-        opt_template += '<select class="question-select" data-posttype=' + URLs.PLUGIN_PREFIX + '"-questions" required>';
-        opt_template += '<option value="" selected="" disabled="">Select question...</option>';
+        _this.next('div').remove();
 
-        for (let i = 0; i < ques_clone[0].length; i++) {
-            const options = ques_clone[0][i];
-            if (options.value != selected_val && options.value != "") {
-                opt_template += '<option value="' + options.value + '">';
-                opt_template += options.textContent;
-                opt_template += '</option>';
+        if (check_page != 'page') {
+            opt_template += '<div style="margin-left: 20px;">';
+            opt_template += '<select class="question-select" data-posttype=' + URLs.PLUGIN_PREFIX + '"-questions" required >';
+            opt_template += '<option value="" selected="" disabled="">Select question...</option>';
+
+            for (let i = 0; i < ques_clone[0].length; i++) {
+                const options = ques_clone[0][i];
+                if (options.value != selected_val && options.value != "") {
+                    opt_template += '<option value="' + options.value + '" ' + ((_this.val() === options.value) ? "selected" : "") + '>';
+                    opt_template += options.textContent;
+                    opt_template += '</option>';
+                }
             }
-        }
 
-        opt_template += '</select>';
-        opt_template += '</div>';
-        _this.parent().append(opt_template);
-    });
+            opt_template += '</select>';
+            opt_template += '</div>';
+            _this.parent().append(opt_template);
+        }
+    }); */
 });

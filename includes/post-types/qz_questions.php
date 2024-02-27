@@ -108,7 +108,7 @@ function render_question_type_meta_box($post)
 <?php
 }
 
-function save_questio_type_data($post_id)
+function save_question_type_data($post_id)
 {
     // Save custom field data when the post is saved
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
@@ -120,4 +120,4 @@ function save_questio_type_data($post_id)
         }
     }
 }
-add_action('save_post', 'save_questio_type_data');
+add_action('save_post', 'save_question_type_data');

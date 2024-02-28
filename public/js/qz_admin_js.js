@@ -75,6 +75,8 @@ jQuery(document).ready(function ($) {
     // function get_questions_ajax() {
     // }
 
+    let quiz_json = [];
+
     // Question selection functionality
     $(document).on('change', '.question-select', function () {
         let _this = $(this);
@@ -113,8 +115,8 @@ jQuery(document).ready(function ($) {
                             opt_template += ques;
                             opt_template += ': ';
                             opt_template += '</span>';
-                            opt_template += '<select class="conditions-select" name="' + ((ques_name != "" || ques_name != undefined) ? ques_name + "_" : "") + 'cd_' + cd_count + '" data-cd_index="' + cd_count + '" required>';
-                            opt_template += '<option value="" selected disabled>Select condition...</option>';
+                            opt_template += '<select class="conditions-select" name="' + ((ques_name != "" || ques_name != undefined) ? ques_name + "__" : "") + 'cd_' + cd_count + '" data-cd_index="' + cd_count + '" required>';
+                            opt_template += '<option value="">Select condition...</option>';
 
                             for (const condition_key in condition) {
                                 if (Object.hasOwnProperty.call(condition, condition_key)) {
@@ -153,8 +155,15 @@ jQuery(document).ready(function ($) {
                     _this.parent().parent().append(ques_template); */
 
                 }
+                else {
+                    _this.next().remove();
+                }
             }
         });
+
+        // if(_this.next('.conditions').length) {
+        //     _this.next('.conditions').children()
+        // }
     });
 
 
@@ -178,8 +187,8 @@ jQuery(document).ready(function ($) {
 
             // ques_template += '<select class="opt-select" required style="margin-left: 20px; display: block; width: 100%;">';
             ques_template += '<div style="margin-left: 20px;">';
-            ques_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "_" : "") + 'qs_' + next_hierarchy_index + '" data-index="' + next_hierarchy_index + '" data-posttype="' + URLs.PLUGIN_PREFIX + '-questions" required>';
-            ques_template += '<option value="" selected="" disabled="">Select question...</option>';
+            ques_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "-" : "") + 'qs_' + next_hierarchy_index + '" data-index="' + next_hierarchy_index + '" data-posttype="' + URLs.PLUGIN_PREFIX + '-questions" required>';
+            ques_template += '<option value="">Select question...</option>';
 
             for (let i = 0; i < ques_clone[0].length; i++) {
                 const options = ques_clone[0][i];
@@ -213,8 +222,9 @@ jQuery(document).ready(function ($) {
                         let data = res.data;
                         opt_template += '<div style="margin-left: 20px;">';
                         // opt_template += '<select class="opt-select" required>';
-                        opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "_" : "") + 'page" data-posttype="" required>';
-                        opt_template += '<option value="" selected disabled>Select question...</option>'
+                        // opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "___" : "") + 'page" data-posttype="" required>';
+                        opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "-" : "") + 'page" data-posttype="" required>';
+                        opt_template += '<option value="">Select question...</option>'
                         for (const key in data) {
                             if (Object.hasOwnProperty.call(data, key)) {
                                 const element = data[key];
@@ -228,7 +238,6 @@ jQuery(document).ready(function ($) {
                         _this.parent().append(opt_template);
                     }
                     else {
-                        alert(res.msg);
                     }
                 }
             });
@@ -263,6 +272,17 @@ jQuery(document).ready(function ($) {
             opt_template += '</select>';
             opt_template += '</div>';
             _this.parent().append(opt_template);
+        }
+    }); */
+
+    // 
+    /* $(document).on('submit', '#post', function (e) {
+        e.preventDefault();
+
+        let quiz_html = $(this).find('#qz_quiz_question>.inside').html();
+        if (quiz_html) {
+            console.log(quiz_html);
+            // $(this).submit();
         }
     }); */
 });

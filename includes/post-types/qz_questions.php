@@ -110,6 +110,7 @@ function render_question_type_meta_box($post)
 
 function save_question_type_data($post_id)
 {
+    global $wpdb;
     // Save custom field data when the post is saved
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
     if (isset($_POST['question_type']) && $_POST['question_type'] != '') {
@@ -118,6 +119,68 @@ function save_question_type_data($post_id)
         if ($_POST['question_type'] === 'multiple') {
             update_post_meta($post_id, 'multiple_options', $_POST['multiple_options']);
         }
+
+        /* $existing_question = $wpdb->get_row("SELECT question_id FROM qz_question WHERE question_id = $post_id");
+        $existing_options = $wpdb->get_var("SELECT options FROM qz_question WHERE question_id = $post_id");
+        $single_options = [
+            'true',
+            'false'
+        ];
+        if ($existing_question === null) {
+            if ($_POST['question_type'] === 'single') {
+                foreach ($single_options as $value) {
+                    $wpdb->insert('qz_question', array(
+                        'question_id' => $post_id,
+                        'options' => $value
+                    ));
+                }
+            } else if ($_POST['question_type'] === 'multiple') {
+                foreach ($_POST['multiple_options'] as $value) {
+                    $wpdb->insert('qz_question', array(
+                        'question_id' => $post_id,
+                        'options' => $value
+                    ));
+                }
+            }
+        } else {
+            if ($_POST['question_type'] === 'single') {
+                $existing_options_array = explode(',', $existing_options);
+
+                if (count($single_options) > count($existing_options_array)) {
+                    // Add new options
+                    $options_to_add = array_diff($single_options, $existing_options_array);
+                    $updated_options_array = array_merge($existing_options_array, $options_to_add);
+                    $updated_options = implode(',', $updated_options_array);
+
+                    $wpdb->update('qz_question', array('options' => $updated_options), array('question_id' => $post_id));
+                } else {
+                    // Remove excess options
+                    $options_to_remove = array_diff($existing_options_array, $single_options);
+                    $updated_options_array = array_diff($existing_options_array, $options_to_remove);
+                    $updated_options = implode(',', $updated_options_array);
+
+                    $wpdb->update('qz_question', array('options' => $updated_options), array('question_id' => $post_id));
+                }
+            } else if ($_POST['question_type'] === 'multiple') {
+                $existing_options_array = explode(',', $existing_options);
+
+                if (count($_POST['multiple_options']) > count($existing_options_array)) {
+                    // Add new options
+                    $options_to_add = array_diff($_POST['multiple_options'], $existing_options_array);
+                    $updated_options_array = array_merge($existing_options_array, $options_to_add);
+                    $updated_options = implode(',', $updated_options_array);
+
+                    $wpdb->update('qz_question', array('options' => $updated_options), array('question_id' => $post_id));
+                } else {
+                    // Remove excess options
+                    $options_to_remove = array_diff($existing_options_array, $_POST['multiple_options']);
+                    $updated_options_array = array_diff($existing_options_array, $options_to_remove);
+                    $updated_options = implode(',', $updated_options_array);
+
+                    $wpdb->update('qz_question', array('options' => $updated_options), array('question_id' => $post_id));
+                }
+            }
+        } */
     }
 }
 add_action('save_post', 'save_question_type_data');

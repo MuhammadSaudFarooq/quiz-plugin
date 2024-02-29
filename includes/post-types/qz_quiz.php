@@ -154,16 +154,18 @@ function render_quiz_question_meta_box($post)
     $pages_loop = new WP_Query($pages_args);
     $pages_loop = $pages_loop->posts;
 
-    $all_quiz_meta = get_post_meta($post_id);
-    $check_qs = get_post_meta($post_id, 'qs_1', true);
+    // $all_quiz_meta = get_post_meta($post_id);
+    $quiz_data = get_post_meta($post_id, 'quiz_data', true);
 
-    function starts_with_qs($key)
-    {
-        return strpos($key, 'qs_') === 0;
-    }
+    // function starts_with_qs($key)
+    // {
+    //     return strpos($key, 'qs_') === 0;
+    // }
 
-    if ($check_qs) {
-        $count = 1;
+
+    if ($quiz_data) {
+
+        // $count = 1;
         // $newArray = array();
 
         // foreach ($all_quiz_meta as $key => $value) {
@@ -172,33 +174,53 @@ function render_quiz_question_meta_box($post)
         //     }
         // }
 
+        // if (!empty($question_loop)) {
+        // echo '<select class="question-select" name="qs_1" data-index="1" data-posttype="qz-questions" required>';
+        // foreach ($question_loop as $ql_key => $ql_val) {
+        //     echo '<option value="' . $ql_val->ID . '" ' . ((isset($check_qs) && $check_qs == $ql_val->ID) ? "selected" : "") . '>' . $ql_val->post_title . '</option>';
+        // }
+        // echo '</select>';
+        // }
+
+        // foreach ($all_quiz_meta as $key => $value) {
+        // if (starts_with_qs($key)) {
+        // echo $key . " -> " . $value[0] . "<br>";
+
+
+        // for ($i = 1; $i <= 6; $i++) {
+        //     $qs_cd_key = "qs_1_cd_" . $i;
+        //     // echo $qs_cd_key;
+        //     if ($qs_cd_key == $key) {
+        //         echo $key . " -> " . $value[0] . "<br>";
+        //     }
+        // }
+        // }
+        // }
+
+
+        // echo "<pre>";
+        // print_r($quiz_data['qs_1']);
         if (!empty($question_loop)) {
-            // echo '<select class="question-select" name="qs_1" data-index="1" data-posttype="qz-questions" required>';
-            // foreach ($question_loop as $ql_key => $ql_val) {
-            //     echo '<option value="' . $ql_val->ID . '" ' . ((isset($check_qs) && $check_qs == $ql_val->ID) ? "selected" : "") . '>' . $ql_val->post_title . '</option>';
-            // }
-            // echo '</select>';
-        }
-
-        foreach ($all_quiz_meta as $key => $value) {
-            if (starts_with_qs($key)) {
-                // echo $key . " -> " . $value[0] . "<br>";
-
-
-                // for ($i = 1; $i <= 6; $i++) {
-                //     $qs_cd_key = "qs_1_cd_" . $i;
-                //     // echo $qs_cd_key;
-                //     if ($qs_cd_key == $key) {
-                //         echo $key . " -> " . $value[0] . "<br>";
-                //     }
-                // }
+            $template = '<div id="quiz-questions">';
+            $template = '<div>';
+            // $template .= '<select class="question-select" name="qs_1" data-index="1" data-posttype="' . $post_type . '" required>';
+            $template .= '<select class="question-select" name="data[qs_1][id]" data-index="1" data-posttype="' . $post_type . '" required>';
+            $template .= '<option value="">Select question...</option>';
+            foreach ($question_loop as $key => $value) {
+                $template .= '<option value="' . $value->ID . '">' . $value->post_title . '</option>';
             }
+            $template .= '</select>';
+            $template .= '</div>';
+            $template .= '</div>';
+            echo $template;
         }
+        // echo "</pre>";
     } else {
         if (!empty($question_loop)) {
             $template = '<div id="quiz-questions">';
             $template = '<div>';
-            $template .= '<select class="question-select" name="qs_1" data-index="1" data-posttype="' . $post_type . '" required>';
+            // $template .= '<select class="question-select" name="qs_1" data-index="1" data-posttype="' . $post_type . '" required>';
+            $template .= '<select class="question-select" name="data[qs_1][id]" data-index="1" data-posttype="' . $post_type . '" required>';
             $template .= '<option value="">Select question...</option>';
             foreach ($question_loop as $key => $value) {
                 $template .= '<option value="' . $value->ID . '">' . $value->post_title . '</option>';
@@ -211,39 +233,43 @@ function render_quiz_question_meta_box($post)
     }
 }
 
+
+
 function save_quiz_question_data($post_id)
 {
     // Save custom field data when the post is saved
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
     if (isset($_POST)) {
-        $filteredKeys = array();
-        foreach ($_POST as $key => $value) {
-            if (strpos($key, 'qs_') === 0) {
-                $filteredKeys[$key] = $value;
-            }
-        }
+        // $filteredKeys = array();
+        // foreach ($_POST as $key => $value) {
+        //     if (strpos($key, 'qs_') === 0) {
+        //         $filteredKeys[$key] = $value;
+        //     }
+        // }
 
-        echo "<pre>";
-        print_r($filteredKeys);
-        foreach ($filteredKeys as $key => $value) {
-            // update_post_meta($post_id, $key, $value);
+        // echo "<pre>";
+        // print_r($_POST);
+        // foreach ($filteredKeys as $key => $value) {
+        // update_post_meta($post_id, $key, $value);
 
-            // print_r(explode('__', $key));
-            $arr1 = explode('__', $key);
-            foreach ($arr1 as $v) {
-                $arr2 = explode('-', $v);
-                print_r($arr2);
-                $arr1[] = $arr2;
-            }
-            print_r($arr1);
-        }
-        echo "</pre>";
-        function json_create()
-        {
-            $array = [];
-            return $array;
-        }
-        exit;
+        // print_r(explode('__', $key));
+        // $arr1 = explode('__', $key);
+        // foreach ($arr1 as $v) {
+        //     $arr2 = explode('-', $v);
+        //     // print_r($arr2);
+        //     $arr1[] = $arr2;
+        // }
+        // print_r($value);
+        // }
+        // echo "</pre>";
+        // function json_create()
+        // {
+        //     $array = [];
+        //     return $array;
+        // }
+        // exit;
+
+        update_post_meta($post_id, 'quiz_data', $_POST['data']);
     }
 }
 

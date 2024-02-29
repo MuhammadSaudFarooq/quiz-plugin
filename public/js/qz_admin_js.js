@@ -84,6 +84,7 @@ jQuery(document).ready(function ($) {
         let question_id = _this.val();
         let hierarchy_index = _this.data('index');
         let ques_name = _this.attr('name');
+        let newObj = {};
 
         $.ajax({
             type: 'post',
@@ -115,7 +116,9 @@ jQuery(document).ready(function ($) {
                             opt_template += ques;
                             opt_template += ': ';
                             opt_template += '</span>';
-                            opt_template += '<select class="conditions-select" name="' + ((ques_name != "" || ques_name != undefined) ? ques_name + "__" : "") + 'cd_' + cd_count + '" data-cd_index="' + cd_count + '" required>';
+                            // opt_template += '<select class="conditions-select" name="' + ((ques_name != "" || ques_name != undefined) ? ques_name + "__" : "") + 'cd_' + cd_count + '" data-cd_index="' + cd_count + '" required>';
+                            opt_template += '<select class="conditions-select" data-name="' + get_key(ques_name) + '[condition][cd_' + cd_count + ']" data-cd_index="' + cd_count + '" required>';
+                            // opt_template += '<select class="conditions-select" data-name="' + ((ques_name != "" || ques_name != undefined) ? ques_name : "") + '[]" data-cd_index="' + cd_count + '" required>';
                             opt_template += '<option value="">Select condition...</option>';
 
                             for (const condition_key in condition) {
@@ -134,6 +137,11 @@ jQuery(document).ready(function ($) {
                     }
                     opt_template += '</div>';
                     _this.parent().append(opt_template);
+
+
+                    // if(newObj.(jQuery(this).val())){
+                    //     Object.assign(newObj, { jQuery(this).val(): {options} });
+                    // }
 
                     // Append new question
                     /* let ques_clone = _this.clone();
@@ -166,7 +174,11 @@ jQuery(document).ready(function ($) {
         // }
     });
 
-
+    function get_key(previous_key) {
+            var new_key = previous_key.replace('[id]', '');
+            new_key = new_key.replace('[qs_id]', '');
+        return new_key;
+    }
     // Condition based options
     $(document).on('change', '.conditions-select', function () {
         let _this = $(this);
@@ -176,7 +188,8 @@ jQuery(document).ready(function ($) {
         let prev_hierarchy_index = _this.parent().parent().prev().data('index');
         let next_hierarchy_index = parseInt(prev_hierarchy_index) + 1;
         let cd_index = _this.data('cd_index');
-        let cd_name = _this.attr('name');
+        // let cd_name = _this.attr('name');
+        let cd_name = _this.data('name');
 
         // _this.parent().find('.opt-select').remove();
         _this.next().remove();
@@ -187,7 +200,9 @@ jQuery(document).ready(function ($) {
 
             // ques_template += '<select class="opt-select" required style="margin-left: 20px; display: block; width: 100%;">';
             ques_template += '<div style="margin-left: 20px;">';
-            ques_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "-" : "") + 'qs_' + next_hierarchy_index + '" data-index="' + next_hierarchy_index + '" data-posttype="' + URLs.PLUGIN_PREFIX + '-questions" required>';
+            // ques_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "-" : "") + 'qs_' + next_hierarchy_index + '" data-index="' + next_hierarchy_index + '" data-posttype="' + URLs.PLUGIN_PREFIX + '-questions" required>';
+            ques_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name : "") + '[qs_id]" data-index="' + next_hierarchy_index + '" data-posttype="' + URLs.PLUGIN_PREFIX + '-questions" required>';
+            // ques_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name : "") + '[]" data-index="' + next_hierarchy_index + '" data-posttype="' + URLs.PLUGIN_PREFIX + '-questions" required>';
             ques_template += '<option value="">Select question...</option>';
 
             for (let i = 0; i < ques_clone[0].length; i++) {
@@ -223,7 +238,9 @@ jQuery(document).ready(function ($) {
                         opt_template += '<div style="margin-left: 20px;">';
                         // opt_template += '<select class="opt-select" required>';
                         // opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "___" : "") + 'page" data-posttype="" required>';
-                        opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "-" : "") + 'page" data-posttype="" required>';
+                        // opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "-" : "") + 'page" data-posttype="" required>';
+                        opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name : "") + '[page_id]" data-posttype="" required>';
+                        // opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name : "") + '[]" data-posttype="" required>';
                         opt_template += '<option value="">Select question...</option>'
                         for (const key in data) {
                             if (Object.hasOwnProperty.call(data, key)) {

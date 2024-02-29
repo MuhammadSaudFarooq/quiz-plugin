@@ -1,3 +1,7 @@
+.post-type-qz-quiz div#wpfooter {
+  display: none;
+}
+
 .multiple-options > label {
   width: 100%;
   display: block;

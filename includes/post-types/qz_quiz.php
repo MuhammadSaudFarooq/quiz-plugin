@@ -197,23 +197,52 @@ function render_quiz_question_meta_box($post)
         // }
         // }
 
-
-        // echo "<pre>";
-        // print_r($quiz_data['qs_1']);
         if (!empty($question_loop)) {
+
+            $single_ques_opt = [
+                'true',
+                'false'
+            ];
+
+            $conditions = [
+                'qz-questions' => 'Question',
+                'page' => 'Page'
+            ];
+
+
             $template = '<div id="quiz-questions">';
             $template = '<div>';
             // $template .= '<select class="question-select" name="qs_1" data-index="1" data-posttype="' . $post_type . '" required>';
             $template .= '<select class="question-select" name="data[qs_1][id]" data-index="1" data-posttype="' . $post_type . '" required>';
             $template .= '<option value="">Select question...</option>';
             foreach ($question_loop as $key => $value) {
-                $template .= '<option value="' . $value->ID . '">' . $value->post_title . '</option>';
+                $template .= '<option value="' . $value->ID . '" ' . ((isset($quiz_data['qs_1']['id']) && $quiz_data['qs_1']['id'] == $value->ID) ? "selected" : "") . '>' . $value->post_title . '</option>';
             }
             $template .= '</select>';
+
+            if (isset($quiz_data['qs_1']['condition']) && count($quiz_data['qs_1']['condition']) > 0) {
+                $template .= '<div class="conditions">';
+                if (get_post_meta($quiz_data['qs_1']['id'], 'question_type', true) === 'single') {
+
+                    foreach ($single_ques_opt as $ques_opt_val) {
+                        $template .= '<div>';
+                        $template .= '<span>' . $ques_opt_val . '</span>';
+                        $template .= '<select>';
+                        $template .= '</select>';
+                        $template .= '</div>';
+                    }
+                }
+                $template .= '</div>';
+            }
+            // echo count($quiz_data['qs_1']['condition']);
+
             $template .= '</div>';
             $template .= '</div>';
             echo $template;
         }
+
+        // echo "<pre>";
+        // print_r($quiz_data['qs_1']);
         // echo "</pre>";
     } else {
         if (!empty($question_loop)) {
@@ -233,7 +262,11 @@ function render_quiz_question_meta_box($post)
     }
 }
 
-
+function quiz_question_rendering()
+{
+    $value = '';
+    return $value;
+}
 
 function save_quiz_question_data($post_id)
 {

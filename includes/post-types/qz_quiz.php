@@ -224,13 +224,21 @@ function render_quiz_question_meta_box($post)
                 $template .= '<div class="conditions">';
                 if (get_post_meta($quiz_data['qs_1']['id'], 'question_type', true) === 'single') {
 
-                    foreach ($single_ques_opt as $ques_opt_val) {
-                        $template .= '<div>';
-                        $template .= '<span>' . $ques_opt_val . '</span>';
-                        $template .= '<select>';
-                        $template .= '</select>';
-                        $template .= '</div>';
-                    }
+                    // foreach ($single_ques_opt as $ques_opt_val) {
+                    //     $template .= '<div>';
+                    //     $template .= '<span>' . $ques_opt_val . '</span>';
+                    //     $template .= '<select class="conditions-select" data-cd_index="" required>';
+
+                    //     $template .= '<option value="">Select condition...</option>';
+                    //     foreach ($conditions as $c_key => $c_value) {
+                    //         $template .= '<option value="' . $c_key . '">' . $c_value . '</option>';
+                    //     }
+
+                    //     $template .= '</select>';
+                    //     $template .= '</div>';
+                    // }
+
+                    $template .= single_type_qs($single_ques_opt, $conditions);
                 }
                 $template .= '</div>';
             }
@@ -241,9 +249,9 @@ function render_quiz_question_meta_box($post)
             echo $template;
         }
 
-        // echo "<pre>";
-        // print_r($quiz_data['qs_1']);
-        // echo "</pre>";
+        echo "<pre>";
+        print_r($quiz_data['qs_1']);
+        echo "</pre>";
     } else {
         if (!empty($question_loop)) {
             $template = '<div id="quiz-questions">';
@@ -260,6 +268,28 @@ function render_quiz_question_meta_box($post)
             echo $template;
         }
     }
+}
+
+
+function single_type_qs($single_ques_opt, $conditions)
+{
+    $template = '';
+    // $template .= '<div class="conditions">';
+    foreach ($single_ques_opt as $ques_opt_val) {
+        $template .= '<div>';
+        $template .= '<span>' . $ques_opt_val . '</span>';
+        $template .= '<select class="conditions-select" data-name="" data-cd_index="" required>';
+
+        $template .= '<option value="">Select condition...</option>';
+        foreach ($conditions as $c_key => $c_value) {
+            $template .= '<option value="' . $c_key . '">' . $c_value . '</option>';
+        }
+
+        $template .= '</select>';
+        $template .= '</div>';
+    }
+    // $template .= '</div>';
+    return $template;
 }
 
 function quiz_question_rendering()

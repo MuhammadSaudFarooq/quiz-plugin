@@ -23,6 +23,7 @@ class QuizPluginIntegration
         add_action('wp_enqueue_scripts', [$this, 'enqueueFrontStyles']);
         add_action('wp_ajax_' . PLUGIN_PREFIX . '_get_questions', [$this, 'ajaxGetQuestions']);
         add_action('wp_ajax_' . PLUGIN_PREFIX . '_condition_options', [$this, 'ajaxConditionOptions']);
+        add_shortcode('quizzes', [$this, 'quizzesShortcode']);
 
         if (!get_option($this->categoryKeyName)) {
             $quizCategories = [
@@ -64,6 +65,7 @@ class QuizPluginIntegration
 
     public function enqueueFrontScripts()
     {
+        wp_enqueue_script('jquery', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js', array(), '3.6.0', true);
         wp_enqueue_script('font_awesome_js', $this->getScriptUrl('all.min.js'), array(), null, false);
         wp_enqueue_script(PLUGIN_PREFIX . '_front_js', $this->getScriptUrl(PLUGIN_PREFIX . '_front_js.js'), array(), null, false);
         wp_localize_script(PLUGIN_PREFIX . '_front_js', 'URLs', array('AJAX_URL' => admin_url('admin-ajax.php'), 'SITE_URL' => site_url(), 'PLUGIN_PREFIX' => PLUGIN_PREFIX));
@@ -90,6 +92,11 @@ class QuizPluginIntegration
     public function ajaxConditionOptions()
     {
         require_once PLUGIN_DIR_PATH . "/includes/ajax/" . PLUGIN_PREFIX . "_condition_options.php";
+    }
+
+    public function quizzesShortcode()
+    {
+        require_once PLUGIN_DIR_PATH . "/includes/templates/" . PLUGIN_PREFIX . "_view.php";
     }
 
     private function getPostTypeUrl($postTypeName)

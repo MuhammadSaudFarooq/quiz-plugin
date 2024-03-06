@@ -17,12 +17,17 @@ class QuizPluginIntegration
     {
         register_uninstall_hook($this->pluginFileName, [$this, 'uninstallAction']);
         add_action('init', [$this, 'registerPostTypes']);
+        add_action('admin_menu', [$this, 'quizSubmission']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminScripts']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
         add_action('wp_enqueue_scripts', [$this, 'enqueueFrontScripts']);
         add_action('wp_enqueue_scripts', [$this, 'enqueueFrontStyles']);
         add_action('wp_ajax_' . PLUGIN_PREFIX . '_get_questions', [$this, 'ajaxGetQuestions']);
         add_action('wp_ajax_' . PLUGIN_PREFIX . '_condition_options', [$this, 'ajaxConditionOptions']);
+        add_action('wp_ajax_' . PLUGIN_PREFIX . '_quiz_render', [$this, 'ajaxQuizRender']);
+        add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_quiz_render', [$this, 'ajaxQuizRender']);
+        add_action('wp_ajax_' . PLUGIN_PREFIX . '_next_question', [$this, 'ajaxQuizRender']);
+        add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_next_question', [$this, 'ajaxQuizRender']);
         add_shortcode('quizzes', [$this, 'quizzesShortcode']);
 
         if (!get_option($this->categoryKeyName)) {
@@ -50,6 +55,23 @@ class QuizPluginIntegration
         require_once $this->getPostTypeUrl(PLUGIN_PREFIX . '_quiz.php');
     }
 
+    public function quizSubmission()
+    {
+        add_submenu_page(
+            'edit.php?post_type=' . PLUGIN_PREFIX . '-quiz',
+            'Submission',
+            'Submission',
+            'manage_options',
+            PLUGIN_PREFIX . '-submission',
+            'quizSubmissionCallback'
+        );
+    }
+
+    public function quizSubmissionCallback()
+    {
+        require_once PLUGIN_DIR_PATH . "/includes/templates/" . PLUGIN_PREFIX . "_submission.php";
+    }
+
     public function enqueueAdminScripts()
     {
         wp_enqueue_script('font_awesome_js', $this->getScriptUrl('all.min.js'), array(), null, false);
@@ -66,6 +88,7 @@ class QuizPluginIntegration
     public function enqueueFrontScripts()
     {
         wp_enqueue_script('jquery', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js', array(), '3.6.0', true);
+        wp_enqueue_script('sweetalert2', 'https://cdn.jsdelivr.net/npm/sweetalert2@11', array(), null, false);
         wp_enqueue_script('font_awesome_js', $this->getScriptUrl('all.min.js'), array(), null, false);
         wp_enqueue_script(PLUGIN_PREFIX . '_front_js', $this->getScriptUrl(PLUGIN_PREFIX . '_front_js.js'), array(), null, false);
         wp_localize_script(PLUGIN_PREFIX . '_front_js', 'URLs', array('AJAX_URL' => admin_url('admin-ajax.php'), 'SITE_URL' => site_url(), 'PLUGIN_PREFIX' => PLUGIN_PREFIX));
@@ -92,6 +115,11 @@ class QuizPluginIntegration
     public function ajaxConditionOptions()
     {
         require_once PLUGIN_DIR_PATH . "/includes/ajax/" . PLUGIN_PREFIX . "_condition_options.php";
+    }
+
+    public function ajaxQuizRender()
+    {
+        require_once PLUGIN_DIR_PATH . "/includes/ajax/" . PLUGIN_PREFIX . "_quiz_render.php";
     }
 
     public function quizzesShortcode()

@@ -36,72 +36,16 @@ $quiz_cat_relation = get_option(PLUGIN_PREFIX . '_quiz_cat_relation');
                 </p>
             </div>
             <div class="step-form" style="display: none;">
-                <h2 class="body-part-head">Shoulders</h2>
-                <form id="regForm" action="/section.html">
-                    <div class="tab">
-                        <label class="question">Q1: How often do you feel pain in your shoulders?</label>
-                        <div class="qs-options">
-                            <input type="radio" id="option1" name="options" value="op1">
-                            <label>Option 1</label>
-                        </div>
-                        <div class="qs-options">
-                            <input type="radio" id="option2" name="options" value="op2">
-                            <label>Option 2</label>
-                        </div>
-                        <div class="qs-options">
-                            <input type="radio" id="option3" name="options" value="op3">
-                            <label>Option 3</label>
-                        </div>
-                        <div class="qs-options">
-                            <input type="radio" id="option4" name="options" value="op4">
-                            <label>Option 4</label>
-                        </div>
-                    </div>
-                    <div class="tab">
-                        <label class="question">Q2: How often do you feel pain in your shoulders?</label>
-                        <div class="qs-options">
-                            <input type="radio" id="option1" name="options" value="op1">
-                            <label>Option 1</label>
-                        </div>
-                        <div class="qs-options">
-                            <input type="radio" id="option2" name="options" value="op2">
-                            <label>Option 2</label>
-                        </div>
-                        <div class="qs-options">
-                            <input type="radio" id="option3" name="options" value="op3">
-                            <label>Option 3</label>
-                        </div>
-                        <div class="qs-options">
-                            <input type="radio" id="option4" name="options" value="op4">
-                            <label>Option 4</label>
-                        </div>
-                    </div>
-                    <div class="tab">
-                        <label class="question">Q3: How often do you feel pain in your shoulders?</label>
-                        <div class="qs-options">
-                            <input type="radio" id="option1" name="options" value="op1">
-                            <label>Option 1</label>
-                        </div>
-                        <div class="qs-options">
-                            <input type="radio" id="option2" name="options" value="op2">
-                            <label>Option 2</label>
-                        </div>
-                        <div class="qs-options">
-                            <input type="radio" id="option3" name="options" value="op3">
-                            <label>Option 3</label>
-                        </div>
-                        <div class="qs-options">
-                            <input type="radio" id="option4" name="options" value="op4">
-                            <label>Option 4</label>
-                        </div>
-                    </div>
+                <h2 class="body-part-head"></h2>
+                <form id="regForm" action="#" method="post">
                     <div style="overflow:auto;" class="nextPrev-btns-main">
                         <div style="float:right;" class="nextPrev-btns-sub">
                             <div class="prev-btn-box">
-                                <button type="button" id="prevBtn" onclick="nextPrev(-1)">Back</button>
+                                <!-- <button type="button" id="prevBtn" onclick="nextPrev(-1)">Back</button> -->
                             </div>
                             <div class="next-btn-box">
-                                <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                                <!-- <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button> -->
+                                <button type="button" id="nextBtn" class="btn_disabled">Next</button>
                             </div>
                         </div>
                     </div>

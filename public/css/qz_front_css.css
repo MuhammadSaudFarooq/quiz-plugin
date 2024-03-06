@@ -234,6 +234,10 @@ input.invalid {
   border-radius: 4px;
 }
 
+.nextPrev-btns-sub button.save_form {
+  padding: 12px 25px;
+}
+
 button:hover {
   opacity: 0.8;
 }
@@ -300,6 +304,7 @@ label.question {
 
 .qs-options label {
   color: #bababa;
+  text-transform: capitalize;
 }
 .step-dots {
   margin: 0 !important;
@@ -340,6 +345,10 @@ button#nextBtn {
   line-height: 100%;
 }
 
+.next-btn-box button.save_form:before {
+  display: none;
+}
+
 .prev-btn-box {
   position: relative;
 }
@@ -354,6 +363,11 @@ button#nextBtn {
   right: unset;
   left: 15px;
   transform: rotate(180deg);
+}
+
+.btn_disabled {
+  pointer-events: none;
+  opacity: 0.8;
 }
 
 @media (max-width: 1199px) {

@@ -19,8 +19,31 @@ if (isset($_POST['action']) && $_POST['action'] == PLUGIN_PREFIX . '_quiz_render
         $question_title = get_the_title($question_id);
 
         if ($question_type === 'single') {
+            $single_options = ['true', 'false'];
             $return['data']['title'] = $question_title;
-            $return['data']['options'] = ['true', 'false'];
+
+            $count = 1;
+            foreach ($single_options as $key => $value) {
+
+                $key = "['qs_1']['condition']['cd_" . ++$key . "']";
+                $redirection_id = $quiz_data['qs_1']['condition']['cd_' . $count]['page_id'];
+
+                if ($redirection_id != '') {
+                    $return['data']['options'][$key] = [
+                        'value' => $value,
+                        'redirect' => get_the_guid($redirection_id),
+                        'ques_id' => $question_id
+                    ];
+                } else {
+                    $return['data']['options'][$key] = [
+                        'value' => $value,
+                        'redirect' => 'empty',
+                        'ques_id' => $question_id
+                    ];
+                }
+
+                $count++;
+            }
         } else {
             $multiple_options = get_post_meta($question_id, 'multiple_options', true);
             $return['data']['title'] = $question_title;
@@ -34,12 +57,14 @@ if (isset($_POST['action']) && $_POST['action'] == PLUGIN_PREFIX . '_quiz_render
                 if ($redirection_id != '') {
                     $return['data']['options'][$key] = [
                         'value' => $value,
-                        'redirect' => get_the_guid($redirection_id)
+                        'redirect' => get_the_guid($redirection_id),
+                        'ques_id' => $question_id
                     ];
                 } else {
                     $return['data']['options'][$key] = [
                         'value' => $value,
-                        'redirect' => 'empty'
+                        'redirect' => 'empty',
+                        'ques_id' => $question_id
                     ];
                 }
 
@@ -88,12 +113,14 @@ if (isset($_POST['action']) && $_POST['action'] == PLUGIN_PREFIX . '_next_questi
                     if ($redirection_id != '') {
                         $return['data']['options'][$k] = [
                             'value' => $single_val,
-                            'redirect' => get_the_guid($redirection_id)
+                            'redirect' => get_the_guid($redirection_id),
+                            'ques_id' => $question_id
                         ];
                     } else {
                         $return['data']['options'][$k] = [
                             'value' => $single_val,
-                            'redirect' => 'empty'
+                            'redirect' => 'empty',
+                            'ques_id' => $question_id
                         ];
                     }
                 }
@@ -120,12 +147,14 @@ if (isset($_POST['action']) && $_POST['action'] == PLUGIN_PREFIX . '_next_questi
                     if ($redirection_id != '') {
                         $return['data']['options'][$k] = [
                             'value' => $multiple_val,
-                            'redirect' => get_the_guid($redirection_id)
+                            'redirect' => get_the_guid($redirection_id),
+                            'ques_id' => $question_id
                         ];
                     } else {
                         $return['data']['options'][$k] = [
                             'value' => $multiple_val,
-                            'redirect' => 'empty'
+                            'redirect' => 'empty',
+                            'ques_id' => $question_id
                         ];
                     }
                 }

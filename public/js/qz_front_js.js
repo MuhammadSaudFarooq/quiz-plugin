@@ -35,7 +35,7 @@ jQuery(document).ready(function ($) {
                             if (Object.hasOwnProperty.call(data.options, key)) {
                                 const element = data.options[key];
                                 template += '<div class="qs-options">';
-                                template += '<input type="radio" id="" name="options" value="" data-key="' + key + '" data-redirect="' + element.redirect + '">';
+                                template += '<input type="radio" id="" name="options' + element.ques_id + '" value="" data-key="' + key + '" data-redirect="' + element.redirect + '">';
                                 template += '<label>' + element.value + '</label>';
                                 template += '</div>';
                             }
@@ -101,7 +101,7 @@ jQuery(document).ready(function ($) {
                             if (Object.hasOwnProperty.call(data.options, key)) {
                                 const element = data.options[key];
                                 template += '<div class="qs-options">';
-                                template += '<input type="radio" id="" name="options" value="" data-key="' + key + '" data-redirect="' + element.redirect + '">';
+                                template += '<input type="radio" id="" name="options' + element.ques_id + '" value="" data-key="' + key + '" data-redirect="' + element.redirect + '">';
                                 template += '<label>' + element.value + '</label>';
                                 template += '</div>';
                             }
@@ -109,6 +109,7 @@ jQuery(document).ready(function ($) {
                         template += '</div>';
 
                         $(template).insertBefore(_this.parents().eq(2));
+                        _this.addClass('btn_disabled');
                     } else {
                         alertModal(res.msg, 'error', '');
                     }
@@ -116,6 +117,38 @@ jQuery(document).ready(function ($) {
             });
         }
         else {
+
+            // Get data of questions
+            let body_part = _this.parents().eq(4).find('.body-part-head').text();
+            let ques_data = {
+                body_part: body_part,
+                list: []
+            };
+            _this.parents().eq(3).find('.tab').each(function (i, v) {
+                let question_name = $(v).find('.question').text();
+                let option_name = $(v).find('input:checked').next('label').text();
+                ques_data.list.push({
+                    question: question_name,
+                    option: option_name
+                });
+            });
+
+
+            // Save quiz data in database
+            $.ajax({
+                type: 'post',
+                cache: false,
+                url: URLs.AJAX_URL,
+                data: {
+                    action: "qz_save_quiz",
+                    ques_data: ques_data
+                },
+                success: function (res) {
+                    res = JSON.parse(res);
+                }
+
+            })
+
             alertModal('Thankyou', 'success', redirect);
         }
     });
@@ -136,7 +169,7 @@ jQuery(document).ready(function ($) {
     });
 });
 
-var currentTab = 0;
+/* var currentTab = 0;
 showTab(currentTab);
 
 function showTab(n) {
@@ -211,7 +244,7 @@ function fixStepIndicator(n) {
     }
 
     x[n].className += " active";
-}
+} */
 
 function alertModal(title, icon, redirect) {
 
@@ -219,15 +252,14 @@ function alertModal(title, icon, redirect) {
         Swal.fire({
             title: title,
             icon: icon
+        }).then(() => {
+            window.location.href = redirect;
         });
     }
     else {
         Swal.fire({
             title: title,
-            icon: icon,
-            time: 5000
-        }).then(() => {
-            window.location.href = redirect;
+            icon: icon
         });
     }
 }

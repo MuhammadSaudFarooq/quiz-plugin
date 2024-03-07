@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 :root {
   --dark-blue: #00203b;
   --poppins: Poppins;
@@ -368,6 +369,28 @@ button#nextBtn {
 .btn_disabled {
   pointer-events: none;
   opacity: 0.8;
+}
+
+.user-form input {
+  width: 100%;
+  border: 1px solid #bababa;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  gap: 15px;
+  padding: 11px 20px;
+  outline: none;
+  font-family: var(--poppins);
+  font-size: 16px;
+  FONT-WEIGHT: 400;
+}
+.user-form label {
+  font-size: 20px;
+  color: #17354D;
+  FONT-WEIGHT: 400;
+  margin-bottom: 0px !important;
+  display: block;
 }
 
 @media (max-width: 1199px) {

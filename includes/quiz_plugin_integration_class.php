@@ -17,7 +17,7 @@ class QuizPluginIntegration
     {
         register_uninstall_hook($this->pluginFileName, [$this, 'uninstallAction']);
         add_action('init', [$this, 'registerPostTypes']);
-        add_action('admin_menu', [$this, 'quizSubmission']);
+        add_action('admin_menu', [$this, 'quizEntries']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminScripts']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
         add_action('wp_enqueue_scripts', [$this, 'enqueueFrontScripts']);
@@ -28,8 +28,11 @@ class QuizPluginIntegration
         add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_quiz_render', [$this, 'ajaxQuizRender']);
         add_action('wp_ajax_' . PLUGIN_PREFIX . '_next_question', [$this, 'ajaxQuizRender']);
         add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_next_question', [$this, 'ajaxQuizRender']);
+        add_action('wp_ajax_' . PLUGIN_PREFIX . '_save_quiz', [$this, 'ajaxSaveQuiz']);
+        add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_save_quiz', [$this, 'ajaxSaveQuiz']);
         add_shortcode('quizzes', [$this, 'quizzesShortcode']);
 
+        // Insert Categories in database
         if (!get_option($this->categoryKeyName)) {
             $quizCategories = [
                 'category-1'    => 'Shoulder',
@@ -47,6 +50,22 @@ class QuizPluginIntegration
             ];
             add_option($this->categoryKeyName, $quizCategories);
         }
+
+        // Create Sync Table
+        $entry_charset_collate = $this->wpdb->get_charset_collate();
+        $entry_table = PLUGIN_PREFIX . '_entries';
+        $entry_check_query = $this->wpdb->prepare('SHOW TABLES LIKE %s', $this->wpdb->esc_like($entry_table));
+
+        if (!$this->wpdb->get_var($entry_check_query) == $entry_table) {
+            $entry_sql = "CREATE TABLE " . $entry_table . " (
+                id int(11) NOT NULL AUTO_INCREMENT,
+                data LONGTEXT DEFAULT NULL,
+                created_at TIMESTAMP,
+                PRIMARY KEY  (id)
+                ) $entry_charset_collate;";
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($entry_sql);
+        }
     }
 
     public function registerPostTypes()
@@ -55,33 +74,44 @@ class QuizPluginIntegration
         require_once $this->getPostTypeUrl(PLUGIN_PREFIX . '_quiz.php');
     }
 
-    public function quizSubmission()
+    public function quizEntries()
     {
         add_submenu_page(
             'edit.php?post_type=' . PLUGIN_PREFIX . '-quiz',
-            'Submission',
-            'Submission',
+            'Entries',
+            'Entries',
             'manage_options',
-            PLUGIN_PREFIX . '-submission',
-            'quizSubmissionCallback'
+            PLUGIN_PREFIX . '-entries',
+            array($this, 'quizEntriesCallback')
         );
     }
 
-    public function quizSubmissionCallback()
+    public function quizEntriesCallback()
     {
         require_once PLUGIN_DIR_PATH . "/includes/templates/" . PLUGIN_PREFIX . "_submission.php";
     }
 
     public function enqueueAdminScripts()
     {
+        $screen = get_current_screen();
         wp_enqueue_script('font_awesome_js', $this->getScriptUrl('all.min.js'), array(), null, false);
+        if ($screen && $screen->id === PLUGIN_PREFIX . '-quiz_page_' . PLUGIN_PREFIX . '-entries') {
+            wp_enqueue_script('twitter_bootstrap_js', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js', array(), null, false);
+            wp_enqueue_script('data_table_js', 'https://cdn.datatables.net/2.0.1/js/dataTables.js', array(), null, false);
+            wp_enqueue_script('data_table_bootstrap_js', 'https://cdn.datatables.net/2.0.1/js/dataTables.bootstrap5.js', array(), null, false);
+        }
         wp_enqueue_script(PLUGIN_PREFIX . '_admin_js', $this->getScriptUrl(PLUGIN_PREFIX . '_admin_js.js'), array(), null, false);
         wp_localize_script(PLUGIN_PREFIX . '_admin_js', 'URLs', array('AJAX_URL' => admin_url('admin-ajax.php'), 'SITE_URL' => site_url(), 'PLUGIN_PREFIX' => PLUGIN_PREFIX));
     }
 
     public function enqueueAdminStyles()
     {
+        $screen = get_current_screen();
         wp_enqueue_style('font_awesome_css', $this->getStyleUrl('all.min.css'), array(), null, 'all');
+        if ($screen && $screen->id === PLUGIN_PREFIX . '-quiz_page_' . PLUGIN_PREFIX . '-entries') {
+            wp_enqueue_style('twitter_bootstrap_css', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css', array(), null, 'all');
+            wp_enqueue_style('data_table_bootstrap_css', 'https://cdn.datatables.net/2.0.1/css/dataTables.bootstrap5.css', array(), null, 'all');
+        }
         wp_enqueue_style(PLUGIN_PREFIX . '_admin_css', $this->getStyleUrl(PLUGIN_PREFIX . '_admin_css.css'), array(), null, 'all');
     }
 
@@ -120,6 +150,11 @@ class QuizPluginIntegration
     public function ajaxQuizRender()
     {
         require_once PLUGIN_DIR_PATH . "/includes/ajax/" . PLUGIN_PREFIX . "_quiz_render.php";
+    }
+
+    public function ajaxSaveQuiz()
+    {
+        require_once PLUGIN_DIR_PATH . "/includes/ajax/" . PLUGIN_PREFIX . "_save_quiz.php";
     }
 
     public function quizzesShortcode()

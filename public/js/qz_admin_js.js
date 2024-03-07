@@ -175,8 +175,8 @@ jQuery(document).ready(function ($) {
     });
 
     function get_key(previous_key) {
-            var new_key = previous_key.replace('[id]', '');
-            new_key = new_key.replace('[qs_id]', '');
+        var new_key = previous_key.replace('[id]', '');
+        new_key = new_key.replace('[qs_id]', '');
         return new_key;
     }
     // Condition based options
@@ -302,4 +302,7 @@ jQuery(document).ready(function ($) {
             // $(this).submit();
         }
     }); */
+
+    // Submission Table
+    new DataTable('#example');
 });

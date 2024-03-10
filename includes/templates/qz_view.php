@@ -35,27 +35,34 @@ $quiz_cat_relation = get_option(PLUGIN_PREFIX . '_quiz_cat_relation');
                     Nemo enim ipsam voluptatem quia voluptas sit aspernatur.
                 </p>
             </div>
-            <!-- <div class="user-form">
-                <div>
-                    <label>Firstname</label>
-                    <input type="text" name="user_firstname" id="user_firstname" placeholder="Enter firstname here...">
-                </div>
-                <div>
-                    <label>Lastname</label>
-                    <input type="text" name="user_lastname" id="user_lastname" placeholder="Enter lastname here...">
-                </div>
-                <div>
-                    <label>Email</label>
-                    <input type="email" name="user_email" id="user_email" placeholder="Enter email here...">
-                </div>
-                <div>
-                    <label>Phone</label>
-                    <input type="phone" name="user_phone" id="user_phone" placeholder="Enter phone number here...">
-                </div>
-            </div> -->
             <div class="step-form" style="display: none;">
                 <h2 class="body-part-head"></h2>
                 <form id="regForm" action="#" method="post">
+                    <div class="user-form" style="display: none;">
+                        <div>
+                            <label>Firstname</label>
+                            <input type="text" name="user_firstname" id="user_firstname" placeholder="Enter firstname here...">
+                            <span class="user-error"></span>
+                        </div>
+                        <div>
+                            <label>Lastname</label>
+                            <input type="text" name="user_lastname" id="user_lastname" placeholder="Enter lastname here...">
+                            <span class="user-error"></span>
+                        </div>
+                        <div>
+                            <label>Email</label>
+                            <input type="email" name="user_email" id="user_email" placeholder="Enter email here...">
+                            <span class="user-error"></span>
+                        </div>
+                        <div>
+                            <label>Phone</label>
+                            <input type="phone" name="user_phone" id="user_phone" placeholder="Enter phone number here...">
+                            <span class="user-error"></span>
+                        </div>
+                        <div style="text-align: right;">
+                            <button type="button" id="form_next">Next</button>
+                        </div>
+                    </div>
                     <div style="overflow:auto;" class="nextPrev-btns-main">
                         <div style="float:right;" class="nextPrev-btns-sub">
                             <div class="prev-btn-box">

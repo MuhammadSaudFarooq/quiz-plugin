@@ -304,5 +304,23 @@ jQuery(document).ready(function ($) {
     }); */
 
     // Submission Table
-    new DataTable('#example');
+    new DataTable('#quiz-entries');
+
+    // View detail
+    jQuery('.view-detail').on('click', function () {
+        let _this = $(this);
+        let data = JSON.parse(_this.find('input').val());
+        let tempalte = '';
+
+        for (const key in data) {
+            if (Object.hasOwnProperty.call(data, key)) {
+                const element = data[key];
+                tempalte += '<ul>';
+                tempalte += '<span>' + element.question + '</span>';
+                tempalte += '<li>' + element.option + '</li>';
+                tempalte += '</ul>';
+            }
+        }
+        $('#quizDetail .modal-body').empty().append(tempalte);
+    });
 });

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
 :root {
   --dark-blue: #00203b;
   --poppins: Poppins;
@@ -222,7 +222,8 @@ input.invalid {
   margin-bottom: 30px;
 }
 
-.nextPrev-btns-sub button {
+.nextPrev-btns-sub button,
+#form_next {
   background-color: #92b8e2;
   color: #000000;
   border: none;
@@ -233,6 +234,7 @@ input.invalid {
   font-weight: 500;
   line-height: 100%;
   border-radius: 4px;
+  position: relative;
 }
 
 .nextPrev-btns-sub button.save_form {
@@ -333,7 +335,8 @@ button#nextBtn {
 }
 
 .next-btn-box button:before,
-.prev-btn-box button:before {
+.prev-btn-box button:before,
+#form_next::before {
   position: absolute;
   content: "➜";
   right: 15px;
@@ -383,14 +386,27 @@ button#nextBtn {
   outline: none;
   font-family: var(--poppins);
   font-size: 16px;
-  FONT-WEIGHT: 400;
+  font-weight: 400;
 }
 .user-form label {
   font-size: 20px;
-  color: #17354D;
-  FONT-WEIGHT: 400;
+  color: #17354d;
+  font-weight: 400;
   margin-bottom: 0px !important;
   display: block;
+}
+
+.user-error {
+  margin-top: -8px;
+  display: block;
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-style: italic;
+  color: #bf0000;
+}
+
+button#form_next {
+  margin-top: 10px;
 }
 
 @media (max-width: 1199px) {

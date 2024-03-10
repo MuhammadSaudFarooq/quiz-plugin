@@ -302,7 +302,7 @@ function save_quiz_question_data($post_id)
 {
     // Save custom field data when the post is saved
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-    if (isset($_POST)) {
+    if (isset($_POST['data'])) {
         // $filteredKeys = array();
         // foreach ($_POST as $key => $value) {
         //     if (strpos($key, 'qs_') === 0) {

@@ -59,6 +59,11 @@ class QuizPluginIntegration
         if (!$this->wpdb->get_var($entry_check_query) == $entry_table) {
             $entry_sql = "CREATE TABLE " . $entry_table . " (
                 id int(11) NOT NULL AUTO_INCREMENT,
+                firstname VARCHAR(255) DEFAULT NULL,
+                lastname VARCHAR(255) DEFAULT NULL,
+                email VARCHAR(255) DEFAULT NULL,
+                phone VARCHAR(255) DEFAULT NULL,
+                body_part VARCHAR(255) DEFAULT NULL,
                 data LONGTEXT DEFAULT NULL,
                 created_at TIMESTAMP,
                 PRIMARY KEY  (id)

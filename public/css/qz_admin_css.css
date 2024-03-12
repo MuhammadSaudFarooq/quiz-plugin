@@ -64,7 +64,7 @@
 }
 
 #quizDetail ul span {
-  font-size: 20px;
+  font-size: 18px;
   color: #17354d;
   font-weight: 400;
   margin-bottom: 0px !important;
@@ -76,6 +76,14 @@
   font-family: var(--poppins);
   font-size: 16px;
   font-weight: 400;
+  text-transform: capitalize;
+}
+
+#quizDetail ul li:before {
+  content: '-';
+  margin-right: 10px;
+  margin-left: 2px;
+  font-weight: bold;
 }
 
 #quizDetail ul {

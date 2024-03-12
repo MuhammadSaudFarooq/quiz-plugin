@@ -17,7 +17,7 @@ class QuizPluginIntegration
     {
         register_uninstall_hook($this->pluginFileName, [$this, 'uninstallAction']);
         add_action('init', [$this, 'registerPostTypes']);
-        add_action('admin_menu', [$this, 'quizEntries']);
+        add_action('admin_menu', [$this, 'optionPages']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminScripts']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
         add_action('wp_enqueue_scripts', [$this, 'enqueueFrontScripts']);
@@ -79,8 +79,19 @@ class QuizPluginIntegration
         require_once $this->getPostTypeUrl(PLUGIN_PREFIX . '_quiz.php');
     }
 
-    public function quizEntries()
+    public function optionPages()
     {
+
+        add_menu_page(
+            'Quiz Settings',
+            'Quiz Settings',
+            'manage_options',
+            'quiz_settings',
+            array($this, 'quizSettingsPageCallback'),
+            'dashicons-admin-generic',
+            10
+        );
+
         add_submenu_page(
             'edit.php?post_type=' . PLUGIN_PREFIX . '-quiz',
             'Entries',
@@ -91,6 +102,11 @@ class QuizPluginIntegration
         );
     }
 
+    public function quizSettingsPageCallback()
+    {
+        require_once PLUGIN_DIR_PATH . "/includes/templates/" . PLUGIN_PREFIX . "_settings.php";
+    }
+
     public function quizEntriesCallback()
     {
         require_once PLUGIN_DIR_PATH . "/includes/templates/" . PLUGIN_PREFIX . "_submission.php";
@@ -99,6 +115,7 @@ class QuizPluginIntegration
     public function enqueueAdminScripts()
     {
         $screen = get_current_screen();
+
         wp_enqueue_script('font_awesome_js', $this->getScriptUrl('all.min.js'), array(), null, false);
         if ($screen && $screen->id === PLUGIN_PREFIX . '-quiz_page_' . PLUGIN_PREFIX . '-entries') {
             wp_enqueue_script('twitter_bootstrap_js', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js', array(), null, false);

@@ -9,9 +9,9 @@ $return = [
 if (isset($_POST['action']) && $_POST['action'] === PLUGIN_PREFIX . '_condition_options') {
     $value = $_POST['value'];
 
-    if ($value === 'page') {
+    if ($value !== '') {
         $page_args = array(
-            'post_type' => 'page',
+            'post_type' => $value,
             'post_status' => 'publish',
             'posts_per_page' => -1,
             'orderby' => 'title',

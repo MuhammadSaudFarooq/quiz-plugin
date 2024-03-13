@@ -80,7 +80,7 @@
 }
 
 #quizDetail ul li:before {
-  content: '-';
+  content: "-";
   margin-right: 10px;
   margin-left: 2px;
   font-weight: bold;
@@ -94,4 +94,30 @@
   width: 700px !important;
   overflow-y: scroll !important;
   height: 500px !important;
+}
+
+.post-type-list label {
+  width: 100px;
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.post-type-list input[type="submit"] {
+  text-transform: capitalize;
+}
+
+#quiz-settings .shortcode h2 {
+  margin-bottom: 0;
+}
+
+#quiz-settings .shortcode p {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.post-type-list > select {
+  width: 100%;
+  margin-bottom: 15px;
 }

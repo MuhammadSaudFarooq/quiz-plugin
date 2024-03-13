@@ -211,7 +211,7 @@ function render_quiz_question_meta_box($post)
 
 
             $template = '<div id="quiz-questions">';
-            $template = '<div>';
+            $template .= '<div>';
             // $template .= '<select class="question-select" name="qs_1" data-index="1" data-posttype="' . $post_type . '" required>';
             $template .= '<select class="question-select" name="data[qs_1][id]" data-index="1" data-posttype="' . $post_type . '" required>';
             $template .= '<option value="">Select question...</option>';

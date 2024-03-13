@@ -11,6 +11,7 @@ if (isset($_POST['action']) && $_POST['action'] === PLUGIN_PREFIX . '_get_questi
 
     if ($posttype != '' && $question_id != '') {
         $question_type = get_post_meta($question_id, 'question_type', true);
+        $saved_post_type = get_option(PLUGIN_PREFIX . '_conditional_post_type');
         /* $question_args = array(
             'post_type' => PLUGIN_PREFIX . '-questions',
             'post_status' => 'publish',
@@ -57,8 +58,8 @@ if (isset($_POST['action']) && $_POST['action'] === PLUGIN_PREFIX . '_get_questi
                 'type' => PLUGIN_PREFIX . '-questions'
             ],
             [
-                'title' => 'Page',
-                'type' => 'page'
+                'title' => 'Redirect',
+                'type' => ((isset($saved_post_type) && $saved_post_type != '') ? $saved_post_type : 'page')
             ]
         ];
 

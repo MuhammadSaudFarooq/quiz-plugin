@@ -121,3 +121,7 @@
   width: 100%;
   margin-bottom: 15px;
 }
+
+.conditions > div > span {
+  text-transform: capitalize;
+}

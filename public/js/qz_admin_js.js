@@ -86,6 +86,14 @@ jQuery(document).ready(function ($) {
         let ques_name = _this.attr('name');
         let newObj = {};
 
+        _this.find('option').removeAttr('selected');
+        _this.children().each(function (i, v) {
+            if (question_id == $(v).val())
+                $(v).attr('selected', 'selected').prop('selected', true);
+
+        });
+
+
         $.ajax({
             type: 'post',
             cache: false,
@@ -103,7 +111,6 @@ jQuery(document).ready(function ($) {
                     let ques_template = '';
                     let opt_template = '<div class="conditions">';
 
-                    // Remove condition on other option selection
                     _this.parent().find('.conditions').remove();
 
                     // Append conditions
@@ -116,9 +123,7 @@ jQuery(document).ready(function ($) {
                             opt_template += ques;
                             opt_template += ': ';
                             opt_template += '</span>';
-                            // opt_template += '<select class="conditions-select" name="' + ((ques_name != "" || ques_name != undefined) ? ques_name + "__" : "") + 'cd_' + cd_count + '" data-cd_index="' + cd_count + '" required>';
                             opt_template += '<select class="conditions-select" data-name="' + get_key(ques_name) + '[condition][cd_' + cd_count + ']" data-cd_index="' + cd_count + '" required>';
-                            // opt_template += '<select class="conditions-select" data-name="' + ((ques_name != "" || ques_name != undefined) ? ques_name : "") + '[]" data-cd_index="' + cd_count + '" required>';
                             opt_template += '<option value="">Select condition...</option>';
 
                             for (const condition_key in condition) {
@@ -137,41 +142,12 @@ jQuery(document).ready(function ($) {
                     }
                     opt_template += '</div>';
                     _this.parent().append(opt_template);
-
-
-                    // if(newObj.(jQuery(this).val())){
-                    //     Object.assign(newObj, { jQuery(this).val(): {options} });
-                    // }
-
-                    // Append new question
-                    /* let ques_clone = _this.clone();
-                    ques_template += '<div>';
-                    ques_template += '<select class="question-select" data-posttype="' + URLs.PLUGIN_PREFIX + '-questions">';
-                    ques_template += '<option value="" selected="" disabled="">Select question...</option>';
-
-                    for (let i = 0; i < ques_clone[0].length; i++) {
-                        const options = ques_clone[0][i];
-                        if (options.value != question_id && options.value != "") {
-                            ques_template += '<option value="' + options.value + '">';
-                            ques_template += options.textContent;
-                            ques_template += '</option>';
-                        }
-                    }
-
-                    ques_template += '</select>';
-                    ques_template += '</div>';
-                    _this.parent().parent().append(ques_template); */
-
                 }
                 else {
                     _this.next().remove();
                 }
             }
         });
-
-        // if(_this.next('.conditions').length) {
-        //     _this.next('.conditions').children()
-        // }
     });
 
     function get_key(previous_key) {
@@ -188,21 +164,23 @@ jQuery(document).ready(function ($) {
         let prev_hierarchy_index = _this.parent().parent().prev().data('index');
         let next_hierarchy_index = parseInt(prev_hierarchy_index) + 1;
         let cd_index = _this.data('cd_index');
-        // let cd_name = _this.attr('name');
         let cd_name = _this.data('name');
 
-        // _this.parent().find('.opt-select').remove();
+        _this.find('option').removeAttr('selected');
+        _this.children().each(function (i, v) {
+            if (value == $(v).val())
+                $(v).attr('selected', 'selected').prop('selected', true);
+
+        });
+
         _this.next().remove();
 
         if (question_type === value) {
             let ques_clone = $(this).parent().parent().prev().clone();
             let selected_val = $(this).parent().parent().prev().find('option:selected').val();
 
-            // ques_template += '<select class="opt-select" required style="margin-left: 20px; display: block; width: 100%;">';
             ques_template += '<div style="margin-left: 20px;">';
-            // ques_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "-" : "") + 'qs_' + next_hierarchy_index + '" data-index="' + next_hierarchy_index + '" data-posttype="' + URLs.PLUGIN_PREFIX + '-questions" required>';
             ques_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name : "") + '[qs_id]" data-index="' + next_hierarchy_index + '" data-posttype="' + URLs.PLUGIN_PREFIX + '-questions" required>';
-            // ques_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name : "") + '[]" data-index="' + next_hierarchy_index + '" data-posttype="' + URLs.PLUGIN_PREFIX + '-questions" required>';
             ques_template += '<option value="">Select question...</option>';
 
             for (let i = 0; i < ques_clone[0].length; i++) {
@@ -236,11 +214,7 @@ jQuery(document).ready(function ($) {
                     if ((res.status === true || res.status === 1) && res.data != undefined) {
                         let data = res.data;
                         opt_template += '<div style="margin-left: 20px;">';
-                        // opt_template += '<select class="opt-select" required>';
-                        // opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "___" : "") + 'page" data-posttype="" required>';
-                        // opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name + "-" : "") + 'page" data-posttype="" required>';
                         opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name : "") + '[page_id]" data-posttype="" required>';
-                        // opt_template += '<select class="question-select" name="' + ((cd_name != '' || cd_name != undefined) ? cd_name : "") + '[]" data-posttype="" required>';
                         opt_template += '<option value="">Select question...</option>'
                         for (const key in data) {
                             if (Object.hasOwnProperty.call(data, key)) {
@@ -255,6 +229,9 @@ jQuery(document).ready(function ($) {
                         _this.parent().append(opt_template);
                     }
                     else {
+                        if (value !== '')
+                            alert(res.msg);
+                        _this.find('>:first-child').prop('selected', true);
                     }
                 }
             });
@@ -302,6 +279,41 @@ jQuery(document).ready(function ($) {
             // $(this).submit();
         }
     }); */
+
+    // Render quiz after saved
+    // (function () {
+    //     $('select[name="data[qs_1][id]"]+.conditions>div').each(function (i, v) {
+    //         // console.log(i, $(v).find('select:last-child').data('name'));
+    //     });
+    // })();
+
+    // Save Quiz HTML
+    if ($('.post-type-' + URLs.PLUGIN_PREFIX + '-quiz').length) {
+        $('#post').submit(function (e) {
+            // e.preventDefault();
+            let html = $('#qz_quiz_question>.inside').html();
+
+            $.ajax({
+                type: 'post',
+                cache: false,
+                url: URLs.AJAX_URL,
+                data: {
+                    action: URLs.PLUGIN_PREFIX + "_quiz_html",
+                    html: html
+                },
+                success: function (res) {
+                    res = JSON.parse(res);
+                    _this.submit();
+                }
+            });
+        });
+    }
+
+
+    /**
+     * Entries JS 
+     * 
+     * */
 
     // Submission Table
     new DataTable('#quiz-entries');

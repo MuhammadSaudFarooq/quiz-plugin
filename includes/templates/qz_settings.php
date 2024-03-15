@@ -1,20 +1,12 @@
 <?php
-// Get Builtin post types as List
-// $get_custom_post_types = get_post_types(array(
-//     'public'   => true,
-//     '_builtin' => false
-// ), 'names');
+// Get All post types as List
 $get_all_post_types = get_post_types('', 'names');
+// echo "<pre>";
+// print_r($_SERVER['REQUEST_URI']);
+// echo "</pre>";
 
 if (isset($_POST) && isset($_POST['submit']) && $_POST['submit'] == 'save') {
     update_option(PLUGIN_PREFIX . '_conditional_post_type', $_POST['qz_post_types']);
-}
-
-function formatString($str)
-{
-    $formattedStr = str_replace(array('_', '-'), ' ', $str);
-    $formattedStr = ucwords($formattedStr);
-    return $formattedStr;
 }
 ?>
 <div id="quiz-settings">
@@ -32,20 +24,11 @@ function formatString($str)
         $count = 1;
         echo '<form action="" method="post" class="post-type-list">';
         echo '<select name="qz_post_types" required>';
-        echo '<option value="" disabled selected>Select post type...</option>';
+        echo '<option value="" disabled ' . ((isset($saved_post_type) && $saved_post_type == '') ? "selected" : "") . '>Select post type...</option>';
         foreach ($get_all_post_types as $key => $value) {
-            // if ($value == 'post' || $value == 'page' || $value == 'conditions') {
-
-            // echo '<label for="qz_post_types-' . $count . '">';
-            // echo '<input type="radio" name="qz_post_types" id="qz_post_types-' . $count . '" value="' . $key . '" required ' . ((isset($saved_post_type) && $saved_post_type == $value) ? "checked" : "") . '>';
-            // echo '<span>' . formatString($value) . '</span>';
-            // echo '</label>';
-
-
-            echo '<option value="' . $key . '" ' . ((isset($saved_post_type) && $saved_post_type == $value) ? "selected" : "") . '>' . formatString($value) . '</option>';
-
+            $get_all_post_type_obj = get_post_type_object($value);
+            echo '<option value="' . $key . '" ' . ((isset($saved_post_type) && $saved_post_type == $value) ? "selected" : "") . '>' . $get_all_post_type_obj->label . '</option>';
             $count++;
-            // }
         }
         echo '</select>';
         echo '<div>';

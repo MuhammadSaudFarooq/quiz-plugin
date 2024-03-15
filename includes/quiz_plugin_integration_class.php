@@ -28,28 +28,30 @@ class QuizPluginIntegration
         add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_quiz_render', [$this, 'ajaxQuizRender']);
         add_action('wp_ajax_' . PLUGIN_PREFIX . '_next_question', [$this, 'ajaxQuizRender']);
         add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_next_question', [$this, 'ajaxQuizRender']);
+        add_action('wp_ajax_' . PLUGIN_PREFIX . '_quiz_html', [$this, 'ajaxSaveQuiz']);
+        add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_quiz_html', [$this, 'ajaxSaveQuiz']);
         add_action('wp_ajax_' . PLUGIN_PREFIX . '_save_quiz', [$this, 'ajaxSaveQuiz']);
         add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_save_quiz', [$this, 'ajaxSaveQuiz']);
         add_shortcode('quizzes', [$this, 'quizzesShortcode']);
 
         // Insert Categories in database
-        if (!get_option($this->categoryKeyName)) {
-            $quizCategories = [
-                'category-1'    => 'Shoulder',
-                'category-2'    => 'Neck',
-                'category-3'    => 'Arm',
-                'category-4'    => 'Head',
-                'category-5'    => 'Legs',
-                'category-6'    => 'Chest',
-                'category-7'    => 'Calves',
-                'category-8'    => 'Backbone',
-                'category-9'    => 'Lower Back',
-                'category-10'   => 'Traps',
-                'category-11'   => 'Abs',
-                'category-12'   => 'Forearms'
-            ];
-            add_option($this->categoryKeyName, $quizCategories);
-        }
+        // if (!get_option($this->categoryKeyName)) {
+        $quizCategories = [
+            'category-1'    => 'Shoulder',
+            'category-2'    => 'Neck',
+            'category-3'    => 'Arm',
+            'category-4'    => 'Head',
+            'category-5'    => 'Legs',
+            'category-6'    => 'Chest',
+            'category-7'    => 'Calves',
+            'category-8'    => 'Backbone',
+            'category-9'    => 'Lower Back',
+            'category-10'   => 'Traps',
+            'category-11'   => 'Abs',
+            'category-12'   => 'Forearms'
+        ];
+        update_option($this->categoryKeyName, $quizCategories);
+        // }
 
         // Create Sync Table
         $entry_charset_collate = $this->wpdb->get_charset_collate();

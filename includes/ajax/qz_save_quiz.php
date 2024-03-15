@@ -36,3 +36,12 @@ if (isset($_POST['action']) && $_POST['action'] == PLUGIN_PREFIX . '_save_quiz')
     print_r(json_encode($return));
     exit;
 }
+
+// Save HTML
+if (isset($_POST['action']) && $_POST['action'] == PLUGIN_PREFIX . '_quiz_html') {
+    session_start();
+    $html = $_POST['html'];
+    $_SESSION['html'] = $html;
+    print_r('true');
+    exit;
+}

@@ -71,12 +71,18 @@ function render_quiz_category_meta_box($post)
     $template = '<div id="quiz-category">';
     if ($quizCatRelation) {
         foreach ($quizCategories as $key => $value) {
-            $template .= '<label for="category-' . $count . '" title="' . (isset($quizCatRelation['category-' . $count]) ? get_the_title($quizCatRelation['category-' . $count]) : "") . '">';
 
-            if (isset($quizCatRelation['category-' . $count]) && $quizCatRelation['category-' . $count] == $post_id) {
-                $template .= '<input type="radio" id="category-' . $count . '" name="quiz_category" value="category-' . $count . '" required checked>';
-            } else if (isset($quizCatRelation['category-' . $count])) {
-                $template .= '<input type="radio" id="category-' . $count . '" name="quiz_category" value="category-' . $count . '" required disabled>';
+            $cat_quiz_id = (isset($quizCatRelation['category-' . $count]) ? $quizCatRelation['category-' . $count] : '');
+
+            $template .= '<label for="category-' . $count . '" title="' . (get_the_title($cat_quiz_id)) . '">';
+            if (!is_null(get_post($cat_quiz_id))) {
+                if ($cat_quiz_id == $post_id) {
+                    $template .= '<input type="radio" id="category-' . $count . '" name="quiz_category" value="category-' . $count . '" required checked>';
+                } else if ($cat_quiz_id) {
+                    $template .= '<input type="radio" id="category-' . $count . '" name="quiz_category" value="category-' . $count . '" required disabled>';
+                } else {
+                    $template .= '<input type="radio" id="category-' . $count . '" name="quiz_category" value="category-' . $count . '" required>';
+                }
             } else {
                 $template .= '<input type="radio" id="category-' . $count . '" name="quiz_category" value="category-' . $count . '" required>';
             }
@@ -130,10 +136,57 @@ function add_questions_to_quiz()
     add_meta_box(PLUGIN_PREFIX . '_quiz_question', __('Questions', 'textdomain'), 'render_quiz_question_meta_box', PLUGIN_PREFIX . '-quiz', 'normal', 'default');
 }
 
+/* function render_quiz_question_meta_box($post)
+{
+    $post_id = $post->ID;
+    $quiz_data = get_post_meta($post_id, 'quiz_data', true);
+    $quiz_html = get_post_meta($post_id, 'quiz_html', true);
+    $post_type = PLUGIN_PREFIX . '-questions';
+
+    $question_args = array(
+        'post_type' => $post_type,
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'orderby' => 'title',
+        'order' => 'ASC',
+    );
+    $question_loop = new WP_Query($question_args);
+    $question_loop = $question_loop->posts;
+
+    if ($quiz_data != '' && $quiz_html != '') {
+        // $template = '<div id="quiz-questions">';
+        $template = $quiz_html;
+        // $template .= '</div>';
+        echo $template;
+    } else {
+        if (!empty($question_loop)) {
+            $template = '<div id="quiz-questions">';
+            $template = '<div>';
+            $template .= '<select class="question-select" name="data[qs_1][id]" data-index="1" data-posttype="' . $post_type . '" required>';
+            $template .= '<option value="">Select question...</option>';
+            foreach ($question_loop as $key => $value) {
+                $template .= '<option value="' . $value->ID . '">' . $value->post_title . '</option>';
+            }
+            $template .= '</select>';
+            $template .= '</div>';
+            $template .= '</div>';
+            echo $template;
+        } else {
+            echo "No question available.";
+        }
+    }
+} */
+
 function render_quiz_question_meta_box($post)
 {
     $post_id = $post->ID;
     $post_type = PLUGIN_PREFIX . '-questions';
+    $saved_conditional_post_type = get_option(PLUGIN_PREFIX . '_conditional_post_type');
+    $name_key = '[qs_1]';
+
+    if ($saved_conditional_post_type == '')
+        $saved_conditional_post_type = 'page';
+
     $question_args = array(
         'post_type' => $post_type,
         'post_status' => 'publish',
@@ -145,7 +198,7 @@ function render_quiz_question_meta_box($post)
     $question_loop = $question_loop->posts;
 
     $pages_args = array(
-        'post_type' => 'page',
+        'post_type' => $saved_conditional_post_type,
         'post_status' => 'publish',
         'posts_per_page' => -1,
         'orderby' => 'title',
@@ -154,48 +207,9 @@ function render_quiz_question_meta_box($post)
     $pages_loop = new WP_Query($pages_args);
     $pages_loop = $pages_loop->posts;
 
-    // $all_quiz_meta = get_post_meta($post_id);
     $quiz_data = get_post_meta($post_id, 'quiz_data', true);
 
-    // function starts_with_qs($key)
-    // {
-    //     return strpos($key, 'qs_') === 0;
-    // }
-
-
     if ($quiz_data) {
-
-        // $count = 1;
-        // $newArray = array();
-
-        // foreach ($all_quiz_meta as $key => $value) {
-        //     if (strpos($key, 'qs_') === 0) {
-        //         $newArray[$key] = $value[0];
-        //     }
-        // }
-
-        // if (!empty($question_loop)) {
-        // echo '<select class="question-select" name="qs_1" data-index="1" data-posttype="qz-questions" required>';
-        // foreach ($question_loop as $ql_key => $ql_val) {
-        //     echo '<option value="' . $ql_val->ID . '" ' . ((isset($check_qs) && $check_qs == $ql_val->ID) ? "selected" : "") . '>' . $ql_val->post_title . '</option>';
-        // }
-        // echo '</select>';
-        // }
-
-        // foreach ($all_quiz_meta as $key => $value) {
-        // if (starts_with_qs($key)) {
-        // echo $key . " -> " . $value[0] . "<br>";
-
-
-        // for ($i = 1; $i <= 6; $i++) {
-        //     $qs_cd_key = "qs_1_cd_" . $i;
-        //     // echo $qs_cd_key;
-        //     if ($qs_cd_key == $key) {
-        //         echo $key . " -> " . $value[0] . "<br>";
-        //     }
-        // }
-        // }
-        // }
 
         if (!empty($question_loop)) {
 
@@ -206,57 +220,56 @@ function render_quiz_question_meta_box($post)
 
             $conditions = [
                 'qz-questions' => 'Question',
-                'page' => 'Page'
+                $saved_conditional_post_type => 'Redirect'
             ];
 
-
+            $key = '[qs_1][id]';
             $template = '<div id="quiz-questions">';
             $template .= '<div>';
-            // $template .= '<select class="question-select" name="qs_1" data-index="1" data-posttype="' . $post_type . '" required>';
-            $template .= '<select class="question-select" name="data[qs_1][id]" data-index="1" data-posttype="' . $post_type . '" required>';
-            $template .= '<option value="">Select question...</option>';
-            foreach ($question_loop as $key => $value) {
-                $template .= '<option value="' . $value->ID . '" ' . ((isset($quiz_data['qs_1']['id']) && $quiz_data['qs_1']['id'] == $value->ID) ? "selected" : "") . '>' . $value->post_title . '</option>';
-            }
-            $template .= '</select>';
-
-            if (isset($quiz_data['qs_1']['condition']) && count($quiz_data['qs_1']['condition']) > 0) {
-                $template .= '<div class="conditions">';
-                if (get_post_meta($quiz_data['qs_1']['id'], 'question_type', true) === 'single') {
-
-                    // foreach ($single_ques_opt as $ques_opt_val) {
-                    //     $template .= '<div>';
-                    //     $template .= '<span>' . $ques_opt_val . '</span>';
-                    //     $template .= '<select class="conditions-select" data-cd_index="" required>';
-
-                    //     $template .= '<option value="">Select condition...</option>';
-                    //     foreach ($conditions as $c_key => $c_value) {
-                    //         $template .= '<option value="' . $c_key . '">' . $c_value . '</option>';
-                    //     }
-
-                    //     $template .= '</select>';
-                    //     $template .= '</div>';
-                    // }
-
-                    $template .= single_type_qs($single_ques_opt, $conditions);
+            $question_values = questions_rending($question_loop,$post_type,$key,$quiz_data);
+            // var_dump('question_render',$question_values);die();
+            $template .= $question_values['temp'];
+            $new_question_list = $question_values['new_ques'];
+            $template .= '<div class="conditions">';
+            if (get_post_meta(getValueFromArray($quiz_data,$key), 'question_type', true) === 'single') {
+                $cd_option = $single_ques_opt;
+                } else {
+                    $multiple_ques_opt = get_post_meta(getValueFromArray($quiz_data,$key), 'multiple_options', true);
+                    $cd_option = $multiple_ques_opt;
                 }
-                $template .= '</div>';
+            foreach($quiz_data['qs_1']['condition'] as $key => $question){
+                $index = str_replace('cd_','',$key);
+                $question_arr = array(
+                    'cd_index' => '['.$key.']',
+                    'option_name' => $cd_option[--$index],
+                    'child_data' => $question
+                );
+                $template .= question_type_fn($single_ques_opt,$quiz_data, $question_arr, $conditions, $name_key, $pages_loop, $question_loop, $key,$saved_conditional_post_type);
             }
-            // echo count($quiz_data['qs_1']['condition']);
+            $template .= '</div>';
+            // if (isset($quiz_data['qs_1']['condition']) && count($quiz_data['qs_1']['condition']) > 0) {
+            //     
+            //     if (get_post_meta($quiz_data['qs_1']['id'], 'question_type', true) === 'single') {
+            //         $template .= question_type_fn($quiz_data, $single_ques_opt, $conditions, $name_key, $pages_loop, $question_loop, "data[qs_1][id]");
+            //     } else {
+            //         $multiple_ques_opt = get_post_meta($quiz_data['qs_1']['id'], 'multiple_options', true);
+            //         $template .= question_type_fn($quiz_data, $multiple_ques_opt, $conditions, $name_key, $pages_loop, $question_loop, "data[qs_1][id]");
+            //     }
+            //     $template .= '</div>';
+            // }
 
             $template .= '</div>';
             $template .= '</div>';
             echo $template;
         }
 
-        echo "<pre>";
-        print_r($quiz_data['qs_1']);
-        echo "</pre>";
+        // echo "<pre>";
+        // // print_r($quiz_data);
+        // echo "</pre>";
     } else {
         if (!empty($question_loop)) {
             $template = '<div id="quiz-questions">';
             $template = '<div>';
-            // $template .= '<select class="question-select" name="qs_1" data-index="1" data-posttype="' . $post_type . '" required>';
             $template .= '<select class="question-select" name="data[qs_1][id]" data-index="1" data-posttype="' . $post_type . '" required>';
             $template .= '<option value="">Select question...</option>';
             foreach ($question_loop as $key => $value) {
@@ -270,31 +283,137 @@ function render_quiz_question_meta_box($post)
     }
 }
 
+function questions_rending($question_loop,$post_type,$question_key,$quiz_data){
+    $question_template = '<select class="question-select" name="data'.$question_key.'" data-index="1" data-posttype="' . $post_type . '" required>';
+    $question_template .= '<option value="">Select question...</option>';
+    foreach ($question_loop as $key => $value) {
+    
+        $question_template .='<option value="' . $value->ID . '" ' . ((getValueFromArray($quiz_data,$question_key) == $value->ID) ? "selected" : "") . '>' . $value->post_title . '</option>';
+    }
+    $question_template .= '</select>';
+    $index= search_question($question_loop,'ID',getValueFromArray($quiz_data,$question_key) );
 
-function single_type_qs($single_ques_opt, $conditions)
+
+    $new_question_list = array_splice($question_loop,$index,$index);
+
+    return array(
+        'temp' =>$question_template,
+        'new_ques' => $new_question_list
+    );
+}
+
+function search_question($question_list, $field, $value)
 {
-    $template = '';
-    // $template .= '<div class="conditions">';
-    foreach ($single_ques_opt as $ques_opt_val) {
+   foreach($question_list as $key => $question)
+   {
+    if($question->$field == $value){
+        return $key;
+    }
+   }
+   return false;
+}
+function question_type_fn($single_ques_opt,$quiz_data, $ques_opt, $conditions, $name_key, $pages_loop, $question_loop, $firstKey,$saved_conditional_post_type,$template = '')
+{
+    
+        $CombinationOfKey = $name_key . '[condition]'.$ques_opt['cd_index'];
         $template .= '<div>';
-        $template .= '<span>' . $ques_opt_val . '</span>';
-        $template .= '<select class="conditions-select" data-name="" data-cd_index="" required>';
+        $template .= '<span>' . $ques_opt['option_name'] . '</span>';
+        $template .= '<select class="conditions-select" data-name="data' . $CombinationOfKey . '" data-cd_index="" required>';
 
         $template .= '<option value="">Select condition...</option>';
+        $upd_quiz_data = getValueFromArray($quiz_data, $CombinationOfKey);
+        if(isset($upd_quiz_data['qs_id']) && $upd_quiz_data['qs_id'] != ''){
+            $option_c_key = 'qz-questions';
+        }else{
+            $option_c_key = $saved_conditional_post_type;
+        }
         foreach ($conditions as $c_key => $c_value) {
-            $template .= '<option value="' . $c_key . '">' . $c_value . '</option>';
+            $template .= '<option value="' . $c_key . '"'. (($c_key == $option_c_key) ? "selected" : "").'>' . $c_value . '</option>';
         }
 
         $template .= '</select>';
+
+    
+        if (isset($upd_quiz_data['page_id']) && $upd_quiz_data['page_id'] != '') {
+            $template .= '<div style="margin-left: 20px;">';
+            $template .= '<select class="question-select" name="data' . $CombinationOfKey . '[page_id]" data-posttype="' . PLUGIN_PREFIX . '-questions">';
+            $template .= '<option value="">Select page...</option>';
+            foreach ($pages_loop as $page_key => $page_value) {
+                $template .= '<option value="' . $page_value->ID . '" ' . (($page_value->ID == $upd_quiz_data['page_id']) ? "selected" : "") . '>' . $page_value->post_title . '</option>';
+            }
+
+            $template .= '</select>';
+            $template .= '</div>';
+        } else {
+            // echo $firstKey;
+            $NewCombinationOfKey = $CombinationOfKey . '[qs_id]';
+            // question_type_fn($quiz_data, $ques_opt, $conditions, $name_key, $pages_loop, $question_loop, $NewCombinationOfKey);
+            // foreach ($question_loop as $ques_key => $ques_value) {
+            // if($upd_quiz_data['qs_id'] != $ques_value->ID) {
+            $template .= '<div style="margin-left: 20px;">';
+            $template .= '<select class="question-select" name="data' . $CombinationOfKey . '[qs_id]" data-posttype="' . PLUGIN_PREFIX . '-questions">';
+            $template .= '<option value="">Select question...</option>'; 
+           
+            foreach ($question_loop as $ques_key => $ques_value) {
+                // var_dump($ques_value);
+                $template .= '<option value="' . $ques_value->ID . '" ' . (($ques_value->ID == $upd_quiz_data['qs_id']) ? "selected" : "") . '>' . $ques_value->post_title . '</option>';
+                $template .= '<div class="conditions">';
+            if (get_post_meta(getValueFromArray($quiz_data,$NewCombinationOfKey), 'question_type', true) === 'single') {
+                $cd_option = $single_ques_opt;
+                } else {
+                    $multiple_ques_opt = get_post_meta(getValueFromArray($quiz_data,$NewCombinationOfKey), 'multiple_options', true);
+                    $cd_option = $multiple_ques_opt;
+                }
+            foreach($upd_quiz_data['condition'] as $key => $question){
+                $index = str_replace('cd_','',$key);
+                $question_arr = array(
+                    'cd_index' => '['.$key.']',
+                    'option_name' => $cd_option[--$index],
+                    'child_data' => $question
+                );
+                // $template .= question_type_fn($single_ques_opt,$quiz_data, $question_arr, $conditions, $CombinationOfKey, $pages_loop, $question_loop, $key,$saved_conditional_post_type);
+            }
+            $template .= '</div>';
+            }
+
+            $template .= '</select>';
+            $template .= '</div>';
+            // }
+            // }
+            // $NewCombinationOfKey = '';
+            // echo $NewCombinationOfKey;
+        }
+
         $template .= '</div>';
-    }
-    // $template .= '</div>';
+
+        // echo $CombinationOfKey . "<br>";
+        $CombinationOfKey = '';
     return $template;
 }
 
-function quiz_question_rendering()
+function getValueFromArray($array, $keys)
 {
+    $keys = [$keys];
     $value = '';
+    foreach ($keys as $key) {
+        // Remove square brackets and split the key into individual keys
+        $key = trim($key, '[]');
+        $keysArr = explode('][', $key);
+
+        // Initialize value as the main array
+        $value = $array;
+
+        // Traverse through each key and get the value
+        foreach ($keysArr as $subKey) {
+            if (isset($value[$subKey])) {
+                $value = $value[$subKey];
+            } else {
+                // If key is not found, set value to null and break the loop
+                $value = null;
+                break;
+            }
+        }
+    }
     return $value;
 }
 
@@ -303,36 +422,10 @@ function save_quiz_question_data($post_id)
     // Save custom field data when the post is saved
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
     if (isset($_POST['data'])) {
-        // $filteredKeys = array();
-        // foreach ($_POST as $key => $value) {
-        //     if (strpos($key, 'qs_') === 0) {
-        //         $filteredKeys[$key] = $value;
-        //     }
-        // }
-
-        // echo "<pre>";
-        // print_r($_POST);
-        // foreach ($filteredKeys as $key => $value) {
-        // update_post_meta($post_id, $key, $value);
-
-        // print_r(explode('__', $key));
-        // $arr1 = explode('__', $key);
-        // foreach ($arr1 as $v) {
-        //     $arr2 = explode('-', $v);
-        //     // print_r($arr2);
-        //     $arr1[] = $arr2;
-        // }
-        // print_r($value);
-        // }
-        // echo "</pre>";
-        // function json_create()
-        // {
-        //     $array = [];
-        //     return $array;
-        // }
-        // exit;
-
+        session_start();
         update_post_meta($post_id, 'quiz_data', $_POST['data']);
+        update_post_meta($post_id, 'quiz_html', $_SESSION['html']);
+        unset($_SESSION['html']);
     }
 }
 

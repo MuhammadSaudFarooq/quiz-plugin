@@ -252,7 +252,6 @@ jQuery(document).ready(function ($) {
                     option: option_name
                 });
             });
-            console.log(ques_data);
 
             // Save quiz data in database
             $.ajax({

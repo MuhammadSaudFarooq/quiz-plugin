@@ -1,3 +1,9 @@
+:root {
+  --link-color: #2271b1;
+  --link-active-color: #135e96;
+  --link-box-shadow: 0 0 0 0.25rem rgb(34 113 177 / 25%);
+}
+
 .post-type-qz-quiz div#wpfooter {
   display: none;
 }
@@ -92,8 +98,35 @@
 
 #quizDetail .modal-content {
   width: 700px !important;
+  /* overflow-y: scroll !important; */
+  height: 500px !important;
+}
+
+#quizDetail .modal-content > .modal-body {
   overflow-y: scroll !important;
   height: 500px !important;
+}
+
+/* width */
+#quizDetail .modal-content > .modal-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+#quizDetail .modal-content > .modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-bottom-right-radius: 10px;
+}
+
+/* Handle */
+#quizDetail .modal-content > .modal-body::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  cursor: pointer;
+}
+
+/* Handle on hover */
+#quizDetail .modal-content > .modal-body::-webkit-scrollbar-thumb:hover {
+  background: #979797;
 }
 
 .post-type-list label {
@@ -124,4 +157,42 @@
 
 .conditions > div > span {
   text-transform: capitalize;
+}
+
+#quiz-entries_wrapper {
+  box-shadow: 0 1px 2px 2px rgb(0 0 0 / 10%);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.sub_user_name {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.view-detail {
+  color: var(--link-color);
+}
+
+.view-detail:focus {
+  outline: 0;
+  box-shadow: unset;
+}
+
+.view-detail:hover {
+  color: var(--link-active-color);
+}
+
+.active > .page-link,
+.page-link.active {
+  background-color: var(--link-color);
+  border-color: var(--link-color);
+}
+
+.page-link {
+  color: var(--link-color);
+}
+
+.page-link:focus {
+  box-shadow: var(--link-box-shadow);
 }

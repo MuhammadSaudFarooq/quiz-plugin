@@ -31,12 +31,12 @@ $result = array_reverse($result);
                     $formattedDate = $date->format('Y-m-d');
                     echo "<tr>";
                     echo "<td>" . $count++ . "</td>";
-                    echo "<td>" . $value->firstname . " " . $value->lastname . "</td>";
+                    echo "<td><a href='javascript:void(0)' class='view-detail sub_user_name' data-bs-toggle='modal' data-bs-target='#quizDetail'>" . $value->firstname . " " . $value->lastname . "</a></td>";
                     echo "<td>" . $value->email . "</td>";
                     echo "<td>" . $value->phone . "</td>";
                     echo "<td>" . $value->body_part . "</td>";
                     echo "<td>" . $formattedDate . "</td>";
-                    echo "<td><a href='javascript:void(0)' class='view-detail'  data-bs-toggle='modal' data-bs-target='#quizDetail'><i class='fa fa-external-link'></i><input type='hidden' value='" . json_encode($data) . "'/></a></td>";
+                    echo "<td><a href='javascript:void(0)' class='view-detail' data-bs-toggle='modal' data-bs-target='#quizDetail'><i class='fa fa-external-link'></i><input type='hidden' class='quiz_data' value='" . json_encode($data) . "'/></a></td>";
                     echo "</tr>";
                 endforeach;
                 ?>

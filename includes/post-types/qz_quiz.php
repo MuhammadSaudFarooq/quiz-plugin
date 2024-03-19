@@ -136,47 +136,6 @@ function add_questions_to_quiz()
     add_meta_box(PLUGIN_PREFIX . '_quiz_question', __('Questions', 'textdomain'), 'render_quiz_question_meta_box', PLUGIN_PREFIX . '-quiz', 'normal', 'default');
 }
 
-/* function render_quiz_question_meta_box($post)
-{
-    $post_id = $post->ID;
-    $quiz_data = get_post_meta($post_id, 'quiz_data', true);
-    $quiz_html = get_post_meta($post_id, 'quiz_html', true);
-    $post_type = PLUGIN_PREFIX . '-questions';
-
-    $question_args = array(
-        'post_type' => $post_type,
-        'post_status' => 'publish',
-        'posts_per_page' => -1,
-        'orderby' => 'title',
-        'order' => 'ASC',
-    );
-    $question_loop = new WP_Query($question_args);
-    $question_loop = $question_loop->posts;
-
-    if ($quiz_data != '' && $quiz_html != '') {
-        // $template = '<div id="quiz-questions">';
-        $template = $quiz_html;
-        // $template .= '</div>';
-        echo $template;
-    } else {
-        if (!empty($question_loop)) {
-            $template = '<div id="quiz-questions">';
-            $template = '<div>';
-            $template .= '<select class="question-select" name="data[qs_1][id]" data-index="1" data-posttype="' . $post_type . '" required>';
-            $template .= '<option value="">Select question...</option>';
-            foreach ($question_loop as $key => $value) {
-                $template .= '<option value="' . $value->ID . '">' . $value->post_title . '</option>';
-            }
-            $template .= '</select>';
-            $template .= '</div>';
-            $template .= '</div>';
-            echo $template;
-        } else {
-            echo "No question available.";
-        }
-    }
-} */
-
 function render_quiz_question_meta_box($post)
 {
     $post_id = $post->ID;
@@ -226,46 +185,35 @@ function render_quiz_question_meta_box($post)
             $key = '[qs_1][id]';
             $template = '<div id="quiz-questions">';
             $template .= '<div>';
-            $question_values = questions_rending($question_loop,$post_type,$key,$quiz_data);
-            // var_dump('question_render',$question_values);die();
+            $question_values = questions_rending($question_loop, $post_type, $key, $quiz_data);
             $template .= $question_values['temp'];
             $new_question_list = $question_values['new_ques'];
             $template .= '<div class="conditions">';
-            if (get_post_meta(getValueFromArray($quiz_data,$key), 'question_type', true) === 'single') {
+            if (get_post_meta(getValueFromArray($quiz_data, $key), 'question_type', true) === 'single') {
                 $cd_option = $single_ques_opt;
-                } else {
-                    $multiple_ques_opt = get_post_meta(getValueFromArray($quiz_data,$key), 'multiple_options', true);
-                    $cd_option = $multiple_ques_opt;
-                }
-            foreach($quiz_data['qs_1']['condition'] as $key => $question){
-                $index = str_replace('cd_','',$key);
+            } else {
+                $multiple_ques_opt = get_post_meta(getValueFromArray($quiz_data, $key), 'multiple_options', true);
+                $cd_option = $multiple_ques_opt;
+            }
+            foreach ($quiz_data['qs_1']['condition'] as $key => $question) {
+                $index = str_replace('cd_', '', $key);
                 $question_arr = array(
-                    'cd_index' => '['.$key.']',
+                    'cd_index' => '[' . $key . ']',
                     'option_name' => $cd_option[--$index],
                     'child_data' => $question
                 );
-                $template .= question_type_fn($single_ques_opt,$quiz_data, $question_arr, $conditions, $name_key, $pages_loop, $question_loop, $key,$saved_conditional_post_type);
+                $template .= question_type_fn($single_ques_opt, $quiz_data, $question_arr, $conditions, $name_key, $pages_loop, $question_loop, $key, $saved_conditional_post_type);
             }
             $template .= '</div>';
-            // if (isset($quiz_data['qs_1']['condition']) && count($quiz_data['qs_1']['condition']) > 0) {
-            //     
-            //     if (get_post_meta($quiz_data['qs_1']['id'], 'question_type', true) === 'single') {
-            //         $template .= question_type_fn($quiz_data, $single_ques_opt, $conditions, $name_key, $pages_loop, $question_loop, "data[qs_1][id]");
-            //     } else {
-            //         $multiple_ques_opt = get_post_meta($quiz_data['qs_1']['id'], 'multiple_options', true);
-            //         $template .= question_type_fn($quiz_data, $multiple_ques_opt, $conditions, $name_key, $pages_loop, $question_loop, "data[qs_1][id]");
-            //     }
-            //     $template .= '</div>';
-            // }
-
             $template .= '</div>';
             $template .= '</div>';
             echo $template;
         }
 
         // echo "<pre>";
-        // // print_r($quiz_data);
+        // print_r($quiz_data);
         // echo "</pre>";
+
     } else {
         if (!empty($question_loop)) {
             $template = '<div id="quiz-questions">';
@@ -283,111 +231,110 @@ function render_quiz_question_meta_box($post)
     }
 }
 
-function questions_rending($question_loop,$post_type,$question_key,$quiz_data){
-    $question_template = '<select class="question-select" name="data'.$question_key.'" data-index="1" data-posttype="' . $post_type . '" required>';
+function questions_rending($question_loop, $post_type, $question_key, $quiz_data)
+{
+    $question_template = '<select class="question-select" name="data' . $question_key . '" data-index="1" data-posttype="' . $post_type . '" required>';
     $question_template .= '<option value="">Select question...</option>';
     foreach ($question_loop as $key => $value) {
-    
-        $question_template .='<option value="' . $value->ID . '" ' . ((getValueFromArray($quiz_data,$question_key) == $value->ID) ? "selected" : "") . '>' . $value->post_title . '</option>';
+
+        $question_template .= '<option value="' . $value->ID . '" ' . ((getValueFromArray($quiz_data, $question_key) == $value->ID) ? "selected" : "") . '>' . $value->post_title . '</option>';
     }
     $question_template .= '</select>';
-    $index= search_question($question_loop,'ID',getValueFromArray($quiz_data,$question_key) );
+    $index = search_question($question_loop, 'ID', getValueFromArray($quiz_data, $question_key));
 
 
-    $new_question_list = array_splice($question_loop,$index,$index);
+    $new_question_list = array_splice($question_loop, $index, $index);
 
     return array(
-        'temp' =>$question_template,
+        'temp' => $question_template,
         'new_ques' => $new_question_list
     );
 }
 
 function search_question($question_list, $field, $value)
 {
-   foreach($question_list as $key => $question)
-   {
-    if($question->$field == $value){
-        return $key;
-    }
-   }
-   return false;
-}
-function question_type_fn($single_ques_opt,$quiz_data, $ques_opt, $conditions, $name_key, $pages_loop, $question_loop, $firstKey,$saved_conditional_post_type,$template = '')
-{
-    
-        $CombinationOfKey = $name_key . '[condition]'.$ques_opt['cd_index'];
-        $template .= '<div>';
-        $template .= '<span>' . $ques_opt['option_name'] . '</span>';
-        $template .= '<select class="conditions-select" data-name="data' . $CombinationOfKey . '" data-cd_index="" required>';
-
-        $template .= '<option value="">Select condition...</option>';
-        $upd_quiz_data = getValueFromArray($quiz_data, $CombinationOfKey);
-        if(isset($upd_quiz_data['qs_id']) && $upd_quiz_data['qs_id'] != ''){
-            $option_c_key = 'qz-questions';
-        }else{
-            $option_c_key = $saved_conditional_post_type;
+    foreach ($question_list as $key => $question) {
+        if ($question->$field == $value) {
+            return $key;
         }
-        foreach ($conditions as $c_key => $c_value) {
-            $template .= '<option value="' . $c_key . '"'. (($c_key == $option_c_key) ? "selected" : "").'>' . $c_value . '</option>';
+    }
+    return false;
+}
+function question_type_fn($single_ques_opt, $quiz_data, $ques_opt, $conditions, $name_key, $pages_loop, $question_loop, $firstKey, $saved_conditional_post_type, $template = '')
+{
+    $CombinationOfKey = $name_key . '[condition]' . $ques_opt['cd_index'];
+    $template .= '<div>';
+    $template .= '<span>' . $ques_opt['option_name'] . '</span>';
+    $template .= '<select class="conditions-select" data-name="data' . $CombinationOfKey . '" data-cd_index="" required>';
+
+    $template .= '<option value="">Select condition...</option>';
+    $upd_quiz_data = getValueFromArray($quiz_data, $CombinationOfKey);
+
+    if (isset($upd_quiz_data['qs_id']) && $upd_quiz_data['qs_id'] != '') {
+        $option_c_key = 'qz-questions';
+    } else {
+        $option_c_key = $saved_conditional_post_type;
+    }
+    foreach ($conditions as $c_key => $c_value) {
+        $template .= '<option value="' . $c_key . '"' . (($c_key == $option_c_key) ? "selected" : "") . '>' . $c_value . '</option>';
+    }
+
+    $template .= '</select>';
+
+
+    if (isset($upd_quiz_data['page_id']) && $upd_quiz_data['page_id'] != '') {
+        $template .= '<div style="margin-left: 20px;">';
+        $template .= '<select class="question-select" name="data' . $CombinationOfKey . '[page_id]" data-posttype="' . PLUGIN_PREFIX . '-questions">';
+        $template .= '<option value="">Select page...</option>';
+        foreach ($pages_loop as $page_key => $page_value) {
+            $template .= '<option value="' . $page_value->ID . '" ' . (($page_value->ID == $upd_quiz_data['page_id']) ? "selected" : "") . '>' . $page_value->post_title . '</option>';
         }
 
         $template .= '</select>';
+        $template .= '</div>';
+    } else {
+        $NewCombinationOfKey = $CombinationOfKey . '[qs_id]';
+        $template .= '<div style="margin-left: 20px;">';
+        $template .= '<select class="question-select" name="data' . $CombinationOfKey . '[qs_id]" data-posttype="' . PLUGIN_PREFIX . '-questions">';
+        $template .= '<option value="">Select question...</option>';
 
-    
-        if (isset($upd_quiz_data['page_id']) && $upd_quiz_data['page_id'] != '') {
-            $template .= '<div style="margin-left: 20px;">';
-            $template .= '<select class="question-select" name="data' . $CombinationOfKey . '[page_id]" data-posttype="' . PLUGIN_PREFIX . '-questions">';
-            $template .= '<option value="">Select page...</option>';
-            foreach ($pages_loop as $page_key => $page_value) {
-                $template .= '<option value="' . $page_value->ID . '" ' . (($page_value->ID == $upd_quiz_data['page_id']) ? "selected" : "") . '>' . $page_value->post_title . '</option>';
-            }
+        // Remove repeated questions from $question_loop (Remove first question)
+        $question_loop = remove_repeated_question($question_loop, $quiz_data['qs_1']['id']);
 
-            $template .= '</select>';
-            $template .= '</div>';
-        } else {
-            // echo $firstKey;
-            $NewCombinationOfKey = $CombinationOfKey . '[qs_id]';
-            // question_type_fn($quiz_data, $ques_opt, $conditions, $name_key, $pages_loop, $question_loop, $NewCombinationOfKey);
-            // foreach ($question_loop as $ques_key => $ques_value) {
-            // if($upd_quiz_data['qs_id'] != $ques_value->ID) {
-            $template .= '<div style="margin-left: 20px;">';
-            $template .= '<select class="question-select" name="data' . $CombinationOfKey . '[qs_id]" data-posttype="' . PLUGIN_PREFIX . '-questions">';
-            $template .= '<option value="">Select question...</option>'; 
-           
-            foreach ($question_loop as $ques_key => $ques_value) {
-                // var_dump($ques_value);
+        foreach ($question_loop as $ques_key => $ques_value) {
+            if ($upd_quiz_data != NULL) {
                 $template .= '<option value="' . $ques_value->ID . '" ' . (($ques_value->ID == $upd_quiz_data['qs_id']) ? "selected" : "") . '>' . $ques_value->post_title . '</option>';
-                $template .= '<div class="conditions">';
-            if (get_post_meta(getValueFromArray($quiz_data,$NewCombinationOfKey), 'question_type', true) === 'single') {
-                $cd_option = $single_ques_opt;
+
+                if (get_post_meta(getValueFromArray($quiz_data, $NewCombinationOfKey), 'question_type', true) === 'single') {
+                    $cd_option = $single_ques_opt;
                 } else {
-                    $multiple_ques_opt = get_post_meta(getValueFromArray($quiz_data,$NewCombinationOfKey), 'multiple_options', true);
+                    $multiple_ques_opt = get_post_meta(getValueFromArray($quiz_data, $NewCombinationOfKey), 'multiple_options', true);
                     $cd_option = $multiple_ques_opt;
                 }
-            foreach($upd_quiz_data['condition'] as $key => $question){
-                $index = str_replace('cd_','',$key);
-                $question_arr = array(
-                    'cd_index' => '['.$key.']',
-                    'option_name' => $cd_option[--$index],
-                    'child_data' => $question
-                );
-                // $template .= question_type_fn($single_ques_opt,$quiz_data, $question_arr, $conditions, $CombinationOfKey, $pages_loop, $question_loop, $key,$saved_conditional_post_type);
             }
-            $template .= '</div>';
-            }
-
-            $template .= '</select>';
-            $template .= '</div>';
-            // }
-            // }
-            // $NewCombinationOfKey = '';
-            // echo $NewCombinationOfKey;
         }
 
-        $template .= '</div>';
+        // Remove repeated questions from $question_loop (Remove nested question)
+        $question_loop = remove_repeated_question($question_loop, $upd_quiz_data['qs_id']);
 
-        // echo $CombinationOfKey . "<br>";
-        $CombinationOfKey = '';
+        $template .= '</select>';
+        $template .= '<div class="conditions">';
+        foreach ($upd_quiz_data['condition'] as $key => $question) {
+            $index = str_replace('cd_', '', $key);
+            $question_arr = array(
+                'cd_index' => '[' . $key . ']',
+                'option_name' => $cd_option[--$index],
+                'child_data' => $question
+            );
+
+            $template .= question_type_fn($single_ques_opt, $quiz_data, $question_arr, $conditions, $CombinationOfKey, $pages_loop, $question_loop, $key, $saved_conditional_post_type);
+        }
+        $template .= '</div>';
+        $template .= '</div>';
+    }
+
+    $template .= '</div>';
+    $CombinationOfKey = '';
     return $template;
 }
 
@@ -415,6 +362,24 @@ function getValueFromArray($array, $keys)
         }
     }
     return $value;
+}
+
+function remove_repeated_question($question_loop, $id)
+{
+    $indexToRemove = null;
+    // Find the index of the object with ID $id
+    foreach ($question_loop as $qk => $qv) {
+        if ($qv->ID == $id) {
+            $indexToRemove = $qk;
+            break;
+        }
+    }
+    // Remove the element at the found index
+    if ($indexToRemove !== null) {
+        unset($question_loop[$indexToRemove]);
+    }
+
+    return $question_loop;
 }
 
 function save_quiz_question_data($post_id)

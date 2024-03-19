@@ -287,29 +287,6 @@ jQuery(document).ready(function ($) {
     //     });
     // })();
 
-    // Save Quiz HTML
-    if ($('.post-type-' + URLs.PLUGIN_PREFIX + '-quiz').length) {
-        $('#post').submit(function (e) {
-            // e.preventDefault();
-            let html = $('#qz_quiz_question>.inside').html();
-
-            $.ajax({
-                type: 'post',
-                cache: false,
-                url: URLs.AJAX_URL,
-                data: {
-                    action: URLs.PLUGIN_PREFIX + "_quiz_html",
-                    html: html
-                },
-                success: function (res) {
-                    res = JSON.parse(res);
-                    _this.submit();
-                }
-            });
-        });
-    }
-
-
     /**
      * Entries JS 
      * 
@@ -321,7 +298,7 @@ jQuery(document).ready(function ($) {
     // View detail
     jQuery('.view-detail').on('click', function () {
         let _this = $(this);
-        let data = JSON.parse(_this.find('input').val());
+        let data = JSON.parse(_this.parent().parent().find('.quiz_data').val());
         let tempalte = '';
 
         for (const key in data) {

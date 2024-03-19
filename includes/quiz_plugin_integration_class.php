@@ -26,16 +26,13 @@ class QuizPluginIntegration
         add_action('wp_ajax_' . PLUGIN_PREFIX . '_condition_options', [$this, 'ajaxConditionOptions']);
         add_action('wp_ajax_' . PLUGIN_PREFIX . '_quiz_render', [$this, 'ajaxQuizRender']);
         add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_quiz_render', [$this, 'ajaxQuizRender']);
-        add_action('wp_ajax_' . PLUGIN_PREFIX . '_next_question', [$this, 'ajaxQuizRender']);
-        add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_next_question', [$this, 'ajaxQuizRender']);
-        add_action('wp_ajax_' . PLUGIN_PREFIX . '_quiz_html', [$this, 'ajaxSaveQuiz']);
-        add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_quiz_html', [$this, 'ajaxSaveQuiz']);
+        add_action('wp_ajax_' . PLUGIN_PREFIX . '_next_question', [$this, 'ajaxNextQuestionRender']);
+        add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_next_question', [$this, 'ajaxNextQuestionRender']);
         add_action('wp_ajax_' . PLUGIN_PREFIX . '_save_quiz', [$this, 'ajaxSaveQuiz']);
         add_action('wp_ajax_nopriv_' . PLUGIN_PREFIX . '_save_quiz', [$this, 'ajaxSaveQuiz']);
         add_shortcode('quizzes', [$this, 'quizzesShortcode']);
 
         // Insert Categories in database
-        // if (!get_option($this->categoryKeyName)) {
         $quizCategories = [
             'category-1'    => 'Shoulder',
             'category-2'    => 'Neck',
@@ -51,7 +48,6 @@ class QuizPluginIntegration
             'category-12'   => 'Forearms'
         ];
         update_option($this->categoryKeyName, $quizCategories);
-        // }
 
         // Create Sync Table
         $entry_charset_collate = $this->wpdb->get_charset_collate();
@@ -174,6 +170,11 @@ class QuizPluginIntegration
     public function ajaxQuizRender()
     {
         require_once PLUGIN_DIR_PATH . "/includes/ajax/" . PLUGIN_PREFIX . "_quiz_render.php";
+    }
+
+    public function ajaxNextQuestionRender()
+    {
+        require_once PLUGIN_DIR_PATH . "/includes/ajax/" . PLUGIN_PREFIX . "_next_question_render.php";
     }
 
     public function ajaxSaveQuiz()

@@ -409,6 +409,10 @@ button#form_next {
   margin-top: 10px;
 }
 
+.body-btn.active {
+  pointer-events: none;
+}
+
 @media (max-width: 1199px) {
   .body-container {
     max-width: 100%;

@@ -10,7 +10,7 @@ if (isset($_POST['action']) && $_POST['action'] == PLUGIN_PREFIX . '_quiz_render
 
     $quiz_id = $_POST['quiz_id'];
     $quiz_data = get_post_meta($quiz_id, 'quiz_data', true);
-    if ($quiz_data == '') {
+    if ($quiz_data == '' || get_post_status($quiz_id) != 'publish') {
         $return['msg'] = 'No quiz available';
     } else {
 

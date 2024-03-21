@@ -276,7 +276,10 @@ function question_type_fn($single_ques_opt, $quiz_data, $ques_opt, $conditions, 
         $option_c_key = $saved_conditional_post_type;
     }
     foreach ($conditions as $c_key => $c_value) {
-        $template .= '<option value="' . $c_key . '"' . (($c_key == $option_c_key) ? "selected" : "") . '>' . $c_value . '</option>';
+        if (count($question_loop) == 0 && $c_key == 'qz-questions') {
+        } else {
+            $template .= '<option value="' . $c_key . '"' . (($c_key == $option_c_key) ? "selected" : "") . '>' . $c_value . '</option>';
+        }
     }
 
     $template .= '</select>';

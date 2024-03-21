@@ -113,6 +113,10 @@ jQuery(document).ready(function ($) {
 
                     _this.parent().find('.conditions').remove();
 
+                    // Remove question from conditions select at last question selection 
+                    if (_this.parent().find('option').length == 2)
+                        condition.splice(0, 1);
+
                     // Append conditions
                     let cd_count = 1;
                     for (const key in data) {
@@ -238,54 +242,6 @@ jQuery(document).ready(function ($) {
         }
 
     });
-
-    // Next question selection
-    /* $(document).on('change', '.opt-select', function () {
-        let _this = $(this);
-        let opt_template = '';
-        let ques_clone = $(this).parent().parent().prev().clone();
-        let selected_val = $(this).parent().parent().prev().find('option:selected').val();
-        let check_page = _this.prev().find('option:selected').val();
-
-        _this.next('div').remove();
-
-        if (check_page != 'page') {
-            opt_template += '<div style="margin-left: 20px;">';
-            opt_template += '<select class="question-select" data-posttype=' + URLs.PLUGIN_PREFIX + '"-questions" required >';
-            opt_template += '<option value="" selected="" disabled="">Select question...</option>';
-
-            for (let i = 0; i < ques_clone[0].length; i++) {
-                const options = ques_clone[0][i];
-                if (options.value != selected_val && options.value != "") {
-                    opt_template += '<option value="' + options.value + '" ' + ((_this.val() === options.value) ? "selected" : "") + '>';
-                    opt_template += options.textContent;
-                    opt_template += '</option>';
-                }
-            }
-
-            opt_template += '</select>';
-            opt_template += '</div>';
-            _this.parent().append(opt_template);
-        }
-    }); */
-
-    // 
-    /* $(document).on('submit', '#post', function (e) {
-        e.preventDefault();
-
-        let quiz_html = $(this).find('#qz_quiz_question>.inside').html();
-        if (quiz_html) {
-            console.log(quiz_html);
-            // $(this).submit();
-        }
-    }); */
-
-    // Render quiz after saved
-    // (function () {
-    //     $('select[name="data[qs_1][id]"]+.conditions>div').each(function (i, v) {
-    //         // console.log(i, $(v).find('select:last-child').data('name'));
-    //     });
-    // })();
 
     /**
      * Entries JS 

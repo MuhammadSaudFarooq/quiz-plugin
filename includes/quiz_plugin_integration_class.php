@@ -137,7 +137,7 @@ class QuizPluginIntegration
 
     public function enqueueFrontScripts()
     {
-        wp_enqueue_script('jquery', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js', array(), '3.6.0', true);
+        wp_enqueue_script('jquery', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js', array(), '3.6.0', false);
         wp_enqueue_script('sweetalert2', 'https://cdn.jsdelivr.net/npm/sweetalert2@11', array(), null, false);
         wp_enqueue_script('font_awesome_js', $this->getScriptUrl('all.min.js'), array(), null, false);
         wp_enqueue_script(PLUGIN_PREFIX . '_front_js', $this->getScriptUrl(PLUGIN_PREFIX . '_front_js.js'), array(), null, false);

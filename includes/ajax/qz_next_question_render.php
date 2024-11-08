@@ -46,7 +46,7 @@ if (isset($_POST['action']) && $_POST['action'] == PLUGIN_PREFIX . '_next_questi
                     if ($redirection_id != '') {
                         $return['data']['options'][$k] = [
                             'value' => $single_val,
-                            'redirect' => get_the_guid($redirection_id),
+                            'redirect' => get_permalink($redirection_id),
                             'ques_id' => $question_id
                         ];
                     } else {
@@ -80,7 +80,7 @@ if (isset($_POST['action']) && $_POST['action'] == PLUGIN_PREFIX . '_next_questi
                     if ($redirection_id != '') {
                         $return['data']['options'][$k] = [
                             'value' => $multiple_val,
-                            'redirect' => get_the_guid($redirection_id),
+                            'redirect' => get_permalink($redirection_id),
                             'ques_id' => $question_id
                         ];
                     } else {

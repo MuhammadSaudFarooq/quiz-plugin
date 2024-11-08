@@ -31,7 +31,7 @@ if (isset($_POST['action']) && $_POST['action'] == PLUGIN_PREFIX . '_quiz_render
                 if ($redirection_id != '') {
                     $return['data']['options'][$key] = [
                         'value' => $value,
-                        'redirect' => get_the_guid($redirection_id),
+                        'redirect' => get_permalink($redirection_id),
                         'ques_id' => $question_id
                     ];
                 } else {
@@ -57,7 +57,7 @@ if (isset($_POST['action']) && $_POST['action'] == PLUGIN_PREFIX . '_quiz_render
                 if ($redirection_id != '') {
                     $return['data']['options'][$key] = [
                         'value' => $value,
-                        'redirect' => get_the_guid($redirection_id),
+                        'redirect' => get_permalink($redirection_id),
                         'ques_id' => $question_id
                     ];
                 } else {
